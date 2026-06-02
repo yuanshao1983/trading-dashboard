@@ -150,16 +150,24 @@
 <script>
 let E = { evo:[], mem:{} };
 
+async function loadJSON(path) {
+  let r = await fetch('data/'+path+'?'+Date.now());
+  if (r.ok) return r.json();
+  r = await fetch('https://raw.githubusercontent.com/yuanshao1983/trading-dashboard/main/data/'+path);
+  if (r.ok) return r.json();
+  return null;
+}
+
 async function boot() {
   const c = document.getElementById('daily-list');
   c.innerHTML = '<div class="empty">加载中…</div>';
   try {
-    const [er, mr] = await Promise.all([
-      fetch('data/evolution_deviation_log.json?'+Date.now()),
-      fetch('data/market_evolution_memory.json?'+Date.now())
+    const [evo, mem] = await Promise.all([
+      loadJSON('evolution_deviation_log.json'),
+      loadJSON('market_evolution_memory.json')
     ]);
-    if (er.ok) E.evo = ((await er.json())||[]).reverse();
-    if (mr.ok) E.mem = (await mr.json())||{};
+    E.evo = (Array.isArray(evo)?evo:[]).reverse();
+    E.mem = mem||{};
   } catch(e) { console.error(e); }
   renderDaily();
 }
