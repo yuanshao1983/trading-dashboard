@@ -105,8 +105,8 @@
     font-variant-numeric: tabular-nums;
   }
   tr:last-child td { border-bottom: none }
-  .pnl-pos { color: #34c759; font-weight: 600 }
-  .pnl-neg { color: #ff3b30; font-weight: 600 }
+  .pnl-pos { color: #ff3b30; font-weight: 600 }
+  .pnl-neg { color: #34c759; font-weight: 600 }
 
   /* Badge */
   .badge {
@@ -220,9 +220,9 @@ fetch('data/trades.json')
     const a = d.account;
     const cards = [
       {label:'当前净值', value:'¥' + a.current_value.toLocaleString(), cls:'neutral'},
-      {label:'累计盈亏', value:'¥' + a.total_pnl.toLocaleString(), cls: a.total_pnl < 0 ? 'red' : 'green'},
-      {label:'盈亏比例', value:(a.total_pnl_pct * 100).toFixed(2), unit:'%', cls: a.total_pnl_pct < 0 ? 'red' : 'green'},
-      {label:'胜率', value:'14%', unit:'(1/7)', cls:'red'},
+      {label:'累计盈亏', value:'¥' + a.total_pnl.toLocaleString(), cls: a.total_pnl < 0 ? 'green' : 'red'},
+      {label:'盈亏比例', value:(a.total_pnl_pct * 100).toFixed(2), unit:'%', cls: a.total_pnl_pct < 0 ? 'green' : 'red'},
+      {label:'胜率', value:'14%', unit:'(1/7)', cls:'neutral'},
       {label:'手续费', value:'¥' + a.total_fees.toFixed(2), cls:'neutral'},
     ];
     document.getElementById('cards').innerHTML = cards.map(c => 
