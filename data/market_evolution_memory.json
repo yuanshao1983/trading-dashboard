@@ -1,0 +1,280 @@
+{
+  "date": "2026-06-01",
+  "time": "16:36",
+  "day_of_week": "周一",
+  "generated_by": "market_postmortem.py",
+  "version": "14章完整版 v2.0",
+  "ch1_weather": {
+    "sh_close": 4057.74,
+    "sh_open": 4067.16,
+    "sh_high": 4093.04,
+    "sh_low": 4045.69,
+    "sh_chg_pct": -0.27,
+    "prev_close": 4068.57,
+    "amplitude": 1.16,
+    "volume_shou": 6760258,
+    "amount_yi": 131.98,
+    "ma5": 4092.8,
+    "ma10": 4113.9,
+    "ma_relation": "MA5死叉MA10",
+    "price_vs_ma5": -35.1,
+    "price_vs_ma10": -56.2,
+    "above_4070": false,
+    "prev_5_closes": [
+      4145.4,
+      4093.7,
+      4098.6,
+      4068.6,
+      4057.7
+    ]
+  },
+  "ch3_sector_flows": {
+    "top_inflow": [
+      {
+        "name": "煤炭开采",
+        "zt_count": 9,
+        "note": "涨停最多板块"
+      },
+      {
+        "name": "消费电子",
+        "zt_count": 8,
+        "note": "涨停集中"
+      },
+      {
+        "name": "IT服务Ⅱ",
+        "zt_count": 8,
+        "note": "涨停集中"
+      },
+      {
+        "name": "电力",
+        "zt_count": 7,
+        "note": "粤电力A 4板龙头"
+      },
+      {
+        "name": "汽车零部",
+        "zt_count": 5,
+        "note": "涨停5只"
+      }
+    ],
+    "sector_note": "东方财富板块资金流API断连，涨停板块集中度替代资金流方向",
+    "top_10_sectors_by_zt": [
+      [
+        "煤炭开采",
+        9
+      ],
+      [
+        "消费电子",
+        8
+      ],
+      [
+        "IT服务Ⅱ",
+        8
+      ],
+      [
+        "电力",
+        7
+      ],
+      [
+        "汽车零部",
+        5
+      ],
+      [
+        "化学原料",
+        4
+      ],
+      [
+        "化学制品",
+        4
+      ],
+      [
+        "服装家纺",
+        4
+      ],
+      [
+        "基础建设",
+        3
+      ],
+      [
+        "专用设备",
+        3
+      ]
+    ]
+  },
+  "ch5_zt_pool": {
+    "total_zt": 118,
+    "after_filter": 118,
+    "filter_rules": "排除688科创板/920北交所/ST",
+    "ladder": [
+      {
+        "name": "粤电力Ａ",
+        "boards": 4,
+        "sector": "电力"
+      }
+    ],
+    "boards_2plus": 11,
+    "note": "最高4板仅为粤电力A，连板梯队薄弱。3板空缺→断层明显，短线接力情绪偏弱"
+  },
+  "ch7_dual_framework": {
+    "shawn_l4_count": 0,
+    "jarvis_l4_count": 0,
+    "shawn_l4": [],
+    "jarvis_l4": [],
+    "status": "dual_framework_20260601.json 未生成（扫描器未运行）",
+    "action_needed": "需确认15:30 cron是否正确触发dual_framework_scanner.py"
+  },
+  "ch10_positions": {
+    "cash": 109808.56,
+    "total_value": 191852.56,
+    "total_pnl": -5232.84,
+    "total_fees": 285.61,
+    "positions": [
+      {
+        "code": "601929",
+        "name": "吉视传媒",
+        "shares": 14400,
+        "entry": 2.94,
+        "current": 2.86,
+        "pnl": -1152,
+        "pnl_pct": -2.72,
+        "strategy": "中线",
+        "entry_date": "2026-05-27",
+        "stop": "技术位失效(MA20/前低+3天)"
+      },
+      {
+        "code": "301683",
+        "name": "慧谷新材",
+        "shares": 300,
+        "entry": 139.07,
+        "current": 136.2,
+        "pnl": -861,
+        "pnl_pct": -2.06,
+        "strategy": "潜伏",
+        "entry_date": "2026-06-01",
+        "stop": "技术位失效"
+      }
+    ],
+    "note": "两仓均浮亏，吉视传媒破2.94成本线后持续走弱。慧谷新材6月1日新建仓即被套。"
+  },
+  "ch11_rating": {
+    "rating": "🔴 空头掌控",
+    "reason": "MA5(4092.8)死叉MA10(4113.9)，上证收4057.74跌破4070生命线",
+    "details": {
+      "ma_cross": "死叉确认",
+      "below_4070": true,
+      "below_ma5": true,
+      "below_ma10": true,
+      "trend_5d": "连续5日下行: 4145→4093→4098→4068→4057"
+    }
+  },
+  "ch12_barometer": {
+    "barometer": "🔴 红色警报",
+    "reason": "大盘收阴(-0.27%)叠加缩量(成交131.98亿，手数676万手)",
+    "vol_threshold": 999,
+    "bidding_threshold": 2.5,
+    "meaning": "全场锁死 — 量比门槛升至999(实际=不交易)。空头掌控+红色警报=双杀",
+    "rule_triggered": "气压计1000家阈值焊死: 上证跌且涨停<50→强制红色警报。但今日涨停118只→红色警报主要因大盘缩量收阴"
+  },
+  "ch13_framework_lock": {
+    "framework": "⚡ Shawn严格框架锁定，JARVIS放宽无限期熔断",
+    "single_budget": 2.5,
+    "unit": "万元",
+    "reason": "🔴空头掌控 + 🔴红色警报 = 双重门禁触发",
+    "meaning": "即使Shawn严格池有候选，单仓也封死2.5万。无短线击球区→观望为主"
+  },
+  "ch14_predictions": {
+    "generated_at": "2026-06-01 16:36",
+    "target_date": "2026-06-02",
+    "dim1_bid_up_count": {
+      "value": "800-1100",
+      "logic": "MA5死叉初期+4070失守的历史恐慌概率平滑。冰点后竞价通常继续收缩"
+    },
+    "dim2_open_direction": {
+      "value": "低开 -0.3%~-0.6%",
+      "logic": "4070失守后的技术惯性下杀，连续5日下行趋势延续"
+    },
+    "dim3_barometer": {
+      "value": "双红灯或橙+红",
+      "logic": "MA5/MA10死叉持续+大概率继续缩量→红色警报延续"
+    },
+    "dim4_zt_count": {
+      "value": "30-45只",
+      "logic": "赚钱效应从118只断崖收缩，恐慌情绪蔓延"
+    },
+    "dim5_l4_expectation": {
+      "value": "计提率≥35%，均涨幅-0.5%~0%",
+      "logic": "极限防守日——量比不到门槛坚决不扣扳机。持仓只守不攻"
+    }
+  },
+  "prediction_verification": {
+    "verified_at": "2026-06-02 09:32",
+    "source": "morning_defense.json",
+    "meltdown": false,
+    "overall_deviation": "1维重度失真(dim1偏差46%)",
+    "budget_adjusted_to": 1.25,
+    "dims": [
+      {
+        "name": "竞价上涨家数",
+        "predicted": "800-1100只",
+        "actual": "1390只",
+        "deviation_pct": 46.3,
+        "severity": "🔴 重度失真",
+        "analysis": "预测严重低估竞价活跃度。恐慌预估过度——MA5死叉的心理影响被放大。1390只说明冰点后次日竞价反而回暖，市场情绪韧性超预期。修正方向：死叉初期竞价收缩幅度应给15-20%安全边际。"
+      },
+      {
+        "name": "大盘多空开盘",
+        "predicted": "低开 -0.3%~-0.6%",
+        "actual": "平开 -0.03%",
+        "deviation_pct": 0,
+        "severity": "🟢 方向正确",
+        "analysis": "方向对了（低开），但幅度几乎为零。预测的低开幅度>0.3%未兑现。市场在4070附近获得短暂支撑，惯性下杀动能不足。"
+      },
+      {
+        "name": "气压计状态",
+        "predicted": "双红灯或橙+红",
+        "actual": "待收盘确认",
+        "deviation_pct": "N/A",
+        "severity": "待确认",
+        "analysis": "需15:30收盘后确认。当前上证4056(-0.04%)平盘震荡，若收盘不破4045低点→可能降为橙色。"
+      },
+      {
+        "name": "全场涨停数",
+        "predicted": "30-45只",
+        "actual": "待收盘确认",
+        "deviation_pct": "N/A",
+        "severity": "待确认",
+        "analysis": "竞价1390只上涨→赚钱效应回暖→涨停数大概率超45只。预测可能再次低估。"
+      },
+      {
+        "name": "L4次日期望",
+        "predicted": "计提率≥35%，均涨幅-0.5%~0%",
+        "actual": "待收盘确认",
+        "deviation_pct": "N/A",
+        "severity": "待确认",
+        "analysis": "需收盘后对比L4候选实际表现。"
+      }
+    ]
+  },
+  "pdca": {
+    "plan": "6月1日15:30生成14章尸检+5维预测",
+    "do": "market_postmortem.py执行，产出memory.json+预测矩阵",
+    "check": "6月2日09:26 morning_verify核验发现dim1偏差46%→触发重度修正",
+    "act": "仓位从2.5万→1.25万。预测模型中恐慌系数需下调：MA5死叉初期竞价收缩不应超过30%",
+    "lessons": [
+      "MA5死叉+4070失守 ≠ 次日竞价冰点。市场对死叉的恐慌消化比预期快",
+      "涨停118只时预测次日30-45只过于极端，应给50-70的宽区间",
+      "竞价上涨家数预测需引入'恐慌消化速率'参数——连续下跌第5天时恐慌加速vs恐慌释放的拐点判断"
+    ]
+  },
+  "position_review": {
+    "601929_吉视传媒": {
+      "action": "持有观望",
+      "reason": "中线策略按技术位止损。当前价2.86 vs 止损技术位(前低/MA20)待确认",
+      "risk": "MA5死叉+大盘破4070→系统性下行压力加大"
+    },
+    "301683_慧谷新材": {
+      "action": "观察",
+      "reason": "6月1日新建仓即被套-2%，潜伏策略等待技术位止损触发或反弹",
+      "risk": "新股波动大，止损纪律严格执行"
+    }
+  }
+}
