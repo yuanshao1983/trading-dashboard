@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>剃刀 · 交易仪表盘</title>
+<style>
+  *, *::before, *::after { margin:0; padding:0; box-sizing:border-box }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', system-ui, sans-serif;
+    background: #f5f5f7;
+    color: #1d1d1f;
+    line-height: 1.47;
+    letter-spacing: -0.022em;
+    padding: 40px 20px;
+  }
+  .container { max-width: 1024px; margin: 0 auto }
+  
+  /* Header */
+  .header {
+    text-align: center;
+    padding: 40px 0 48px;
+  }
+  .header h1 {
+    font-size: 48px;
+    font-weight: 700;
+    letter-spacing: -0.04em;
+    color: #1d1d1f;
+  }
+  .header .sub {
+    font-size: 17px;
+    color: #86868b;
+    margin-top: 8px;
+  }
+
+  /* Cards */
+  .cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 16px;
+    margin-bottom: 40px;
+  }
+  .card {
+    background: #fff;
+    border-radius: 18px;
+    padding: 20px 24px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+  }
+  .card .label {
+    font-size: 12px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: #86868b;
+    margin-bottom: 8px;
+  }
+  .card .value {
+    font-size: 32px;
+    font-weight: 700;
+    letter-spacing: -0.03em;
+  }
+  .card .unit {
+    font-size: 16px;
+    font-weight: 500;
+    color: #86868b;
+  }
+  .red { color: #ff3b30 }
+  .green { color: #34c759 }
+  .neutral { color: #1d1d1f }
+
+  /* Sections */
+  .section {
+    background: #fff;
+    border-radius: 18px;
+    padding: 28px 28px 20px;
+    margin-bottom: 20px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+  }
+  .section h2 {
+    font-size: 21px;
+    font-weight: 700;
+    margin-bottom: 16px;
+    letter-spacing: -0.022em;
+  }
+
+  /* Table */
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 15px;
+  }
+  th {
+    text-align: left;
+    font-size: 12px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: #86868b;
+    padding: 8px 12px;
+    border-bottom: 1px solid #e5e5ea;
+  }
+  td {
+    padding: 10px 12px;
+    border-bottom: 1px solid #f5f5f7;
+    font-variant-numeric: tabular-nums;
+  }
+  tr:last-child td { border-bottom: none }
+  .pnl-pos { color: #34c759; font-weight: 600 }
+  .pnl-neg { color: #ff3b30; font-weight: 600 }
+
+  /* Badge */
+  .badge {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 20px;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+  }
+  .badge-red { background: #ffe5e5; color: #ff3b30 }
+  .badge-green { background: #e5ffe5; color: #34c759 }
+  .badge-gray { background: #f5f5f7; color: #86868b }
+
+  /* Lessons */
+  .lessons {
+    list-style: none;
+    counter-reset: lesson;
+  }
+  .lessons li {
+    counter-increment: lesson;
+    padding: 8px 0;
+    border-bottom: 1px solid #f5f5f7;
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    font-size: 15px;
+  }
+  .lessons li::before {
+    content: "0" counter(lesson);
+    font-size: 12px;
+    font-weight: 700;
+    color: #ff3b30;
+    white-space: nowrap;
+    padding-top: 2px;
+  }
+  .lessons li:last-child { border-bottom: none }
+
+  .footer {
+    text-align: center;
+    padding: 32px 0;
+    font-size: 13px;
+    color: #86868b;
+  }
+  .footer .update {
+    font-weight: 600;
+    color: #1d1d1f;
+  }
+
+  /* PDCA */
+  .pdca {
+    font-size: 14px;
+    color: #515154;
+    margin-top: 12px;
+    padding: 12px 16px;
+    background: #f5f5f7;
+    border-radius: 12px;
+  }
+  .pdca strong { color: #1d1d1f }
+</style>
+</head>
+<body>
+<div class="container">
+
+  <div class="header">
+    <h1>剃刀 · 交易仪表盘</h1>
+    <p class="sub">JARVIS × 张麻子 · 模拟盘 v4 · 每日15:30自动更新</p>
+  </div>
+
+  <!-- Cards loaded by JS -->
+  <div class="cards" id="cards"></div>
+
+  <!-- Trades -->
+  <div class="section">
+    <h2>📋 交易记录</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>标的</th>
+          <th>日期</th>
+          <th>策略</th>
+          <th>买入价</th>
+          <th>卖出价</th>
+          <th>盈亏</th>
+          <th>退出原因</th>
+        </tr>
+      </thead>
+      <tbody id="trades"></tbody>
+    </table>
+  </div>
+
+  <!-- Summary -->
+  <div class="section">
+    <h2>⚡ 策略审计</h2>
+    <ul class="lessons" id="lessons"></ul>
+    <div class="pdca" id="pdca"></div>
+  </div>
+
+  <div class="footer">
+    <p><span class="update" id="updated"></span> · yuanshao1983/trading-dashboard</p>
+    <p style="margin-top:4px">JARVIS 自主决策 · 盈亏自负 · 数据机器生成</p>
+  </div>
+
+</div>
+
+<script>
+fetch('data/trades.json')
+  .then(r => r.json())
+  .then(d => {
+    // Cards
+    const a = d.account;
+    const cards = [
+      {label:'当前净值', value:'¥' + a.current_value.toLocaleString(), cls:'neutral'},
+      {label:'累计盈亏', value:'¥' + a.total_pnl.toLocaleString(), cls: a.total_pnl < 0 ? 'red' : 'green'},
+      {label:'盈亏比例', value:(a.total_pnl_pct * 100).toFixed(2), unit:'%', cls: a.total_pnl_pct < 0 ? 'red' : 'green'},
+      {label:'胜率', value:'14%', unit:'(1/7)', cls:'red'},
+      {label:'手续费', value:'¥' + a.total_fees.toFixed(2), cls:'neutral'},
+    ];
+    document.getElementById('cards').innerHTML = cards.map(c => 
+      `<div class="card"><div class="label">${c.label}</div><div class="value ${c.cls}">${c.value}<span class="unit">${c.unit||''}</span></div></div>`
+    ).join('');
+
+    // Trades table
+    document.getElementById('trades').innerHTML = d.trades.map(t => {
+      const pnl = t.pnl != null ? t.pnl : (t.note ? t.note : '—');
+      const pnlCls = t.pnl > 0 ? 'pnl-pos' : (t.pnl < 0 ? 'pnl-neg' : '');
+      const badge = t.tag === '🔴' ? 'badge-red' : 'badge-green';
+      return `<tr>
+        <td>${t.tag||''} <strong>${t.name}</strong> <span style="color:#86868b">${t.code}</span></td>
+        <td>${t.buy_date} → ${t.sell_date} <span class="badge ${badge}">${t.holding_days}天</span></td>
+        <td>${t.strategy}</td>
+        <td>¥${t.buy_price}</td>
+        <td>${t.sell_price ? '¥'+t.sell_price : '—'}</td>
+        <td class="${pnlCls}">${typeof pnl === 'number' ? '¥'+pnl.toLocaleString() : pnl}</td>
+        <td style="font-size:13px;color:#86868b;max-width:220px">${t.exit_reason}</td>
+      </tr>`;
+    }).join('');
+
+    // Lessons
+    document.getElementById('lessons').innerHTML = d.lessons.map(l => `<li>${l}</li>`).join('');
+
+    // PDCA
+    document.getElementById('pdca').innerHTML = `
+      <strong>📐 PDCA闭环：</strong>7笔交易，6笔亏损，1笔盈利(¥520)。
+      核心病因：<strong>数字硬止损</strong>触发4次，全部卖在日内低点。
+      <strong>P(修复)</strong> → 废除-3%/-5%/-8%，改为技术位止损+VWAP分级。
+      <strong>D(执行)</strong> → 慧谷新材6/2后，瞬时反应协议已清除所有数字硬止损残留。
+      <strong>C(检验)</strong> → 下笔交易若再因硬止损卖在低点，协议视为失效。
+      <strong>A(固化)</strong> → 写入SOUL.md · 极限风控模块 · 瞬时反应协议。
+    `;
+
+    document.getElementById('updated').textContent = '更新: ' + d.updated;
+  });
+</script>
+</body>
+</html>
