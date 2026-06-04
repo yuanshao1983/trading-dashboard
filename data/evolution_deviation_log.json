@@ -351,7 +351,7 @@
   {
     "date": "2026-06-04",
     "time": "09:34:13",
-    "verdict": "🔴 重度偏离 — 单仓预算锁死至1.0万（3维超30%阈值）",
+    "verdict": "🔴🔴 系统性重度失真 — 无条件熔断全天交易（最大偏差135%）",
     "severe_count": 3,
     "moderate_count": 0,
     "defense": {
@@ -402,36 +402,41 @@
         "name": "竞价上涨家数",
         "pred": "1500-2200",
         "real": "552",
-        "dev": 70.2,
-        "severity": "🔴"
+        "dev": 135.4,
+        "severity": "🔴🔴",
+        "formula": "dev=min(|552-1500|,|552-2200|)/700=948/700=135.4% (距离下限948)"
       },
       {
         "name": "大盘多空开盘",
-        "pred": "+0.1%~+0.3%",
-        "real": "低开 -0.74%",
-        "dev": 100,
-        "severity": "🔴"
+        "pred": "高开",
+        "real": "低开",
+        "dev": 100.0,
+        "severity": "🔴",
+        "formula": "dev=100% (完全相反: 预测'高开'→实际'低开')"
       },
       {
         "name": "气压计状态",
         "pred": "绿灯或黄灯",
-        "real": "🔴 红灯（竞价上涨552<1000，熔断）",
-        "dev": 100,
-        "severity": "🔴"
+        "real": "橙+红",
+        "dev": 100.0,
+        "severity": "🔴",
+        "formula": "dev=100% (完全相反: 预测'绿灯或黄灯'→实际'橙+红')"
       },
       {
         "name": "全场涨停数",
-        "pred": "60-85只",
-        "real": "74只",
-        "dev": 2.1,
-        "severity": "🟢"
+        "pred": "60-85",
+        "real": "74",
+        "dev": 0.0,
+        "severity": "🟢命中",
+        "formula": "dev=0 (实际74∈[60,85])"
       },
       {
-        "name": "L4候选期望值",
-        "pred": "计提率≥50%",
-        "real": "待补（需次日L4表现数据）",
+        "name": "L4次日期望",
+        "pred": "计提率≥50%，均涨幅+1%~+3%",
+        "real": "待L2对撞",
         "dev": 0,
-        "severity": "⚪"
+        "severity": "⏳待验证",
+        "formula": "次日收盘后计算"
       }
     ],
     "morning_prediction": {
@@ -468,6 +473,12 @@
       "patch_location": "market_postmortem.py L930-932: 新增defense.meltdown优先判断",
       "patch_status": "✅ 06.04已修复 — 熔断态优先于映射表",
       "logic_debt": false
-    }
+    },
+    "severity_flags": [
+      "大盘多空开盘_偏差100%",
+      "气压计状态_偏差100%"
+    ],
+    "max_dev": 135.4,
+    "engine": "deviation_engine_v2.0"
   }
 ]
