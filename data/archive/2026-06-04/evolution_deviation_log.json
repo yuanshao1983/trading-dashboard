@@ -1,10 +1,359 @@
 [
   {
+    "date": "2026-06-01",
+    "time": "16:24:58",
+    "verdict": "🟡 中度偏离 — 单仓预算腰斩至1.25万",
+    "severe_count": 1,
+    "defense": {
+      "meltdown": false,
+      "single_budget": 1.25,
+      "reason": "09:26核验触发1维度重度失真: dim1_偏差58%",
+      "timestamp": "2026-06-01T16:24:58.068509",
+      "deviations": [
+        {
+          "name": "竞价上涨家数",
+          "pred": "800-1100",
+          "real": "1503",
+          "dev": 58.2,
+          "severity": "🔴"
+        },
+        {
+          "name": "大盘多空开盘",
+          "pred": "低开 -0.3%~-0.6%",
+          "real": "平开 -0.03%",
+          "dev": 0,
+          "severity": "🟢"
+        },
+        {
+          "name": "气压计状态",
+          "pred": "黄灯或绿灯（竞价800-1100，中性偏弱）",
+          "real": "🟢 绿灯（竞价上涨1503≥1000）",
+          "dev": 0,
+          "severity": "🟢"
+        },
+        {
+          "name": "全场涨停数",
+          "pred": "55-75只",
+          "real": "166只",
+          "dev": 0,
+          "severity": "🟢"
+        },
+        {
+          "name": "L4候选期望值",
+          "pred": "计提率40-50%，均涨幅-1%~+1%",
+          "real": "待补（需次日L4表现数据）",
+          "dev": 0,
+          "severity": "⚪"
+        }
+      ]
+    },
+    "deviations": [
+      {
+        "name": "竞价上涨家数",
+        "pred": "800-1100",
+        "real": "1503",
+        "dev": 58.2,
+        "severity": "🔴"
+      },
+      {
+        "name": "大盘多空开盘",
+        "pred": "低开 -0.3%~-0.6%",
+        "real": "平开 -0.03%",
+        "dev": 0,
+        "severity": "🟢"
+      },
+      {
+        "name": "气压计状态",
+        "pred": "黄灯或绿灯（竞价800-1100，中性偏弱）",
+        "real": "🟢 绿灯（竞价上涨1503≥1000）",
+        "dev": 0,
+        "severity": "🟢"
+      },
+      {
+        "name": "全场涨停数",
+        "pred": "55-75只",
+        "real": "166只",
+        "dev": 0,
+        "severity": "🟢"
+      },
+      {
+        "name": "L4候选期望值",
+        "pred": "计提率40-50%，均涨幅-1%~+1%",
+        "real": "待补（需次日L4表现数据）",
+        "dev": 0,
+        "severity": "⚪"
+      }
+    ],
+    "_audit_note": "采样时间16:24(非09:25窗口)+仅2维→06.02审计后修复",
+    "moderate_count": 0,
+    "deep_attribution": {
+      "right": "L1: 🟡 中度偏离 — 单仓预算腰斩至1.25万",
+      "wrong": "L2: 方向预测偏离（准确度30%）",
+      "root_cause": "morning_prediction生成逻辑过于简化：bid_up_ratio<40%→一律判'弱势下探'。未考虑前日(05-29)大跌后的技术修复动能+煤炭/AI应用的结构性做多力量。",
+      "fix": "P1: morning_verify Step5需增加'前日涨跌修复预期'因子 + '板块轮动热度'因子。bid_up_ratio<40%不自动=弱势。",
+      "patch": "P1: morning_verify Step5需增加'前日涨跌修复预期'因子 + '板块轮动热度'因子。bid_up_ratio<40%不自动=弱势。"
+    },
+    "l2_verification": {
+      "market_real": "上证收盘4057.74，-0.23%（开4067→收4058，微跌）。指数跌但3700+只个股上涨，典型「指数弱、个股强」格局。166只涨停，23只跌停。",
+      "sector_real": "领涨：煤炭+5.53%、传媒+3.32%、美容护理+2.66% | 领跌：电子-4.17%、通信-3.28%、建筑材料-2.82%。资金从高位科技向低位价值切换。",
+      "stock_real": "空仓，无持仓对比。L4候选次日表现：系统未运行。",
+      "accuracy": 30,
+      "verdict": "偏离",
+      "analysis": "预测'弱势下探-0.5%~-1.0%'，实际仅微跌-0.23%。方向对（跌）但幅度严重高估，且完全未预判「指数弱、个股强」的分化格局。核心盲区：过于依赖竞价情绪（bid_up 1503但开盘方向偏弱）而忽视结构性赚钱效应（3700+上涨）。",
+      "root_cause": "morning_prediction生成逻辑过于简化：bid_up_ratio<40%→一律判'弱势下探'。未考虑前日(05-29)大跌后的技术修复动能+煤炭/AI应用的结构性做多力量。",
+      "patch": "P1: morning_verify Step5需增加'前日涨跌修复预期'因子 + '板块轮动热度'因子。bid_up_ratio<40%不自动=弱势。"
+    },
+    "pdca_checklist": {
+      "trigger": "L2准确度30%，偏离度70%>20%阈值",
+      "deviation_point": "预测上证-0.5%~-1.0%弱势下探，实际仅-0.23%微跌；漏判3700+只个股上涨的结构性赚钱效应",
+      "root_cause_type": "模型缺陷",
+      "root_cause_detail": "morning_prediction映射表仅依赖bid_up_ratio单一因子，bid_up_ratio=30%直接判为'弱势下探'。未接入前日涨跌修复预期、板块轮动热度、个股涨跌比等辅助因子。",
+      "patch_location": "market_postmortem.py L935-940: bid_up_ratio→market_pred映射表",
+      "patch_status": "✅ 06.04已修复 — 重校准为55%/35%/20%三档",
+      "logic_debt": false
+    }
+  },
+  {
+    "date": "2026-06-02",
+    "time": "09:32:05",
+    "verdict": "🟡 中度偏离 — 单仓预算腰斩至1.25万 ⚠️逻辑负债:隔夜事件扫描",
+    "severe_count": 2,
+    "defense": {
+      "meltdown": false,
+      "single_budget": 1.25,
+      "reason": "09:26核验触发1维度重度失真: dim1_偏差46%",
+      "timestamp": "2026-06-02T09:32:05.472968",
+      "deviations": [
+        {
+          "name": "竞价上涨家数",
+          "pred": "800-1100",
+          "real": "1390",
+          "dev": 46.3,
+          "severity": "🔴"
+        },
+        {
+          "name": "大盘多空开盘",
+          "pred": "低开 -0.3%~-0.6%",
+          "real": "平开 +0.09%",
+          "dev": 100,
+          "severity": "🔴"
+        },
+        {
+          "name": "气压计状态",
+          "pred": "黄灯或绿灯（竞价800-1100，中性偏弱）",
+          "real": "🟢 绿灯（竞价上涨1390≥1000）",
+          "dev": 0,
+          "severity": "🟢"
+        },
+        {
+          "name": "全场涨停数",
+          "pred": "60-80只",
+          "real": "96只",
+          "dev": 0,
+          "severity": "🟢"
+        },
+        {
+          "name": "L4候选期望值",
+          "pred": "计提率40-50%，均涨幅-1%~+1%",
+          "real": "待补（需次日L4表现数据）",
+          "dev": 0,
+          "severity": "⚪"
+        }
+      ]
+    },
+    "deviations": [
+      {
+        "name": "竞价上涨家数",
+        "pred": "800-1100",
+        "real": "1390",
+        "dev": 46.3,
+        "severity": "🔴"
+      },
+      {
+        "name": "大盘多空开盘",
+        "pred": "低开 -0.3%~-0.6%",
+        "real": "平开 +0.09%",
+        "dev": 100,
+        "severity": "🔴"
+      },
+      {
+        "name": "气压计状态",
+        "pred": "黄灯或绿灯（竞价800-1100，中性偏弱）",
+        "real": "🟢 绿灯（竞价上涨1390≥1000）",
+        "dev": 0,
+        "severity": "🟢"
+      },
+      {
+        "name": "全场涨停数",
+        "pred": "60-80只",
+        "real": "96只",
+        "dev": 0,
+        "severity": "🟢"
+      },
+      {
+        "name": "L4候选期望值",
+        "pred": "计提率40-50%，均涨幅-1%~+1%",
+        "real": "待补（需次日L4表现数据）",
+        "dev": 0,
+        "severity": "⚪"
+      }
+    ],
+    "_audit_note": "09:11时空污染版已清除→此条为09:32修正版；verdict按旧逻辑(severe>=2才🔴)判🟡，按焊死线应为🔴",
+    "moderate_count": 0,
+    "deep_attribution": {
+      "right": "L1: 🟡 中度偏离 — 单仓预算腰斩至1.25万",
+      "wrong": "L2: 方向预测完全失效（准确度0%）",
+      "root_cause": "morning_prediction未接入隔夜重大催化因子。英伟达GTC大会是前一天晚上的确定性事件，但竞价模型对此完全无感知。bid_up_count作为唯一情绪代理不可靠。",
+      "fix": "P1: morning_verify需接入隔夜事件扫描（英伟达/苹果/特斯拉等巨头发布会、重大政策）。P2: 竞价情绪+隔夜催化双因子模型。",
+      "patch": "P1: morning_verify需接入隔夜事件扫描（英伟达/苹果/特斯拉等巨头发布会、重大政策）。P2: 竞价情绪+隔夜催化双因子模型。"
+    },
+    "l2_verification": {
+      "market_real": "上证收盘4075.10，+0.34%（开4061→收4075，收涨）。创业板+2.66%，科创50+1.62%。权重护盘、小票杀跌，1372涨vs3739跌。96只涨停，18只跌停。",
+      "sector_real": "领涨：通信设备+6.48%、元件+5.63%、工业金属+4.19% | 领跌：影视院线-4.18%、广告营销-3.95%、渔业-3.24%。AI硬件（光模块/交换芯片）受英伟达GTC催化爆发。",
+      "stock_real": "空仓，无持仓对比。",
+      "accuracy": 0,
+      "verdict": "完全失效",
+      "analysis": "预测'弱势下探-0.5%~-1.0%'，实际收涨+0.34%且创业板暴涨2.66%。方向完全相反。根本原因：竞价bid_up仅1390（偏弱）触发了弱势预判，但英伟达GTC Taipei催化下的AI硬件板块（通信+6.48%）成为全天最强主线，完全扭转了开盘情绪。",
+      "root_cause": "morning_prediction未接入隔夜重大催化因子。英伟达GTC大会是前一天晚上的确定性事件，但竞价模型对此完全无感知。bid_up_count作为唯一情绪代理不可靠。",
+      "patch": "P1: morning_verify需接入隔夜事件扫描（英伟达/苹果/特斯拉等巨头发布会、重大政策）。P2: 竞价情绪+隔夜催化双因子模型。"
+    },
+    "pdca_checklist": {
+      "trigger": "L2准确度0%，偏离度100%>20%阈值",
+      "deviation_point": "预测上证弱势下探，实际+0.43%收涨+创业板暴涨2.66%。方向完全相反。",
+      "root_cause_type": "外部突发",
+      "root_cause_detail": "英伟达GTC Taipei大会（隔夜已知事件）催化AI硬件板块（通信+6.48%）。morning_prediction完全未接入隔夜事件因子，对确定性催化无感知。",
+      "patch_location": "market_postmortem.py Step5: 需新增隔夜事件扫描模块（待开发）",
+      "patch_status": "⚠️ 待定修复：需人工注入补丁 — 隔夜事件扫描为新增功能模块，当前系统架构未覆盖",
+      "logic_debt": true
+    }
+  },
+  {
+    "date": "2026-06-03",
+    "time": "09:26:46",
+    "verdict": "🔴 重度偏离 — 单仓预算锁死至1.0万（1维超30%阈值）",
+    "severe_count": 1,
+    "defense": {
+      "meltdown": false,
+      "single_budget": 1.0,
+      "reason": "09:26核验: 1维度突破30%重度线(dim1_偏差45%)。强制启动盘后归因追责，不准打太极。",
+      "timestamp": "2026-06-03T09:26:46.832090",
+      "deviations": [
+        {
+          "name": "竞价上涨家数",
+          "pred": "1500-2200",
+          "real": "1015",
+          "dev": 45.1,
+          "severity": "🔴"
+        },
+        {
+          "name": "大盘多空开盘",
+          "pred": "平开或小幅高开 +0.1%~+0.3%",
+          "real": "高开 +0.26%",
+          "dev": 0,
+          "severity": "🟢"
+        },
+        {
+          "name": "气压计状态",
+          "pred": "绿灯或黄灯（竞价1500-2200，偏强）",
+          "real": "🟢 绿灯（竞价上涨1015≥1000）",
+          "dev": 0,
+          "severity": "🟢"
+        },
+        {
+          "name": "全场涨停数",
+          "pred": "55-75只",
+          "real": "64只",
+          "dev": 0,
+          "severity": "🟢"
+        },
+        {
+          "name": "L4候选期望值",
+          "pred": "计提率≥50%，均涨幅+1%~+3%",
+          "real": "待补（需次日L4表现数据）",
+          "dev": 0,
+          "severity": "⚪"
+        }
+      ]
+    },
+    "deviations": [
+      {
+        "name": "竞价上涨家数",
+        "pred": "1500-2200",
+        "real": "1015",
+        "dev": 45.1,
+        "severity": "🔴"
+      },
+      {
+        "name": "大盘多空开盘",
+        "pred": "平开或小幅高开 +0.1%~+0.3%",
+        "real": "高开 +0.26%",
+        "dev": 0,
+        "severity": "🟢"
+      },
+      {
+        "name": "气压计状态",
+        "pred": "绿灯或黄灯（竞价1500-2200，偏强）",
+        "real": "🟢 绿灯（竞价上涨1015≥1000）",
+        "dev": 0,
+        "severity": "🟢"
+      },
+      {
+        "name": "全场涨停数",
+        "pred": "55-75只",
+        "real": "64只",
+        "dev": 0,
+        "severity": "🟢"
+      },
+      {
+        "name": "L4候选期望值",
+        "pred": "计提率≥50%，均涨幅+1%~+3%",
+        "real": "待补（需次日L4表现数据）",
+        "dev": 0,
+        "severity": "⚪"
+      }
+    ],
+    "morning_prediction": {
+      "market": "上证预计弱势下探，-0.5%~-1.0%。竞价上涨仅20%，空头主导开盘",
+      "sectors": "待板块实盘数据确认（09:30开盘后拉东方财富行业涨幅TOP5进行二次修正）",
+      "stocks": "空仓状态，无持仓股需预测。L4候选标的待09:30开盘后根据板块资金二次筛选。",
+      "logic": "竞价上涨27/133=20%，上证+0.26%，平开震荡",
+      "timestamp": "2026-06-03T09:26:46.832090"
+    },
+    "moderate_count": 0,
+    "_audit_note": "首条含morning_prediction(L2第一环)；dim1偏差45%→单仓1.0万",
+    "deep_attribution": {
+      "right": "L1: 🔴 重度偏离 — 单仓预算锁死至1.0万（1维超30%阈值）",
+      "wrong": "L2: 方向预测完全失效（准确度10%）",
+      "root_cause": "morning_prediction的bid_up_ratio→market_pred的映射表严重失真。20%竞价上涨率在震荡市中属于中性偏暖，但代码固定判为'弱势下探'。",
+      "fix": "P0: 立即修正morning_verify Step5中bid_up_ratio→market_pred的映射表。20-40%→震荡、>40%→偏强、<20%→弱势。旧映射已连续3天给出相反结论。",
+      "patch": "P0: 立即修正morning_verify Step5中bid_up_ratio→market_pred的映射表。20-40%→震荡、>40%→偏强、<20%→弱势。旧映射已连续3天给出相反结论。"
+    },
+    "l2_verification": {
+      "market_real": "上证收盘4083.97，+0.38%（开4068→收4084，收涨）。创业板突破4200创历史新高，科创综指+3.83%。光模块/光纤爆发，66只涨停。约1500涨vs4000跌，极致分化。",
+      "sector_real": "领涨：通信+8%、电子+4%、机械设备+1.8% | 领跌：食品饮料、公用事业、交通运输。光模块（中际旭创/天孚通信）+光纤（长飞光纤/亨通光电）为绝对主线。",
+      "stock_real": "空仓，无持仓对比。",
+      "accuracy": 10,
+      "verdict": "完全失效",
+      "analysis": "预测'弱势下探-0.5%~-1.0%'，实际收涨+0.38%。方向再次相反。morning_prediction中logic字段写'竞价上涨27/133=20%'——实际上bid_up是1015只(20%采样率)，但morning_prediction仍判为弱势。这是预测逻辑的自我矛盾：数据已经显示不弱，但结论仍是弱势。",
+      "root_cause": "morning_prediction的bid_up_ratio→market_pred的映射表严重失真。20%竞价上涨率在震荡市中属于中性偏暖，但代码固定判为'弱势下探'。",
+      "patch": "P0: 立即修正morning_verify Step5中bid_up_ratio→market_pred的映射表。20-40%→震荡、>40%→偏强、<20%→弱势。旧映射已连续3天给出相反结论。"
+    },
+    "pdca_checklist": {
+      "trigger": "L2准确度10%，偏离度90%>20%阈值",
+      "deviation_point": "预测弱势下探，实际+0.38%收涨+创业板突破4200创历史新高。morning_prediction自相矛盾：logic写'竞价20%'但结论仍是弱势。",
+      "root_cause_type": "模型缺陷",
+      "root_cause_detail": "bid_up_ratio→market_pred映射表在20-40%区间一律输出'弱势下探'，无视实际bid_up_count=1015(>1000阈值)的偏强信号。连续第3天同样错误。",
+      "patch_location": "market_postmortem.py L935-940: 映射表阈值",
+      "patch_status": "✅ 06.04已修复 — 20-35%→震荡偏弱，35-55%→窄幅震荡",
+      "logic_debt": false
+    }
+  },
+  {
     "date": "2026-06-04",
     "time": "09:34:13",
     "verdict": "🔴 重度偏离 — 单仓预算锁死至1.0万（3维超30%阈值）",
     "severe_count": 3,
-    "moderate_count": 2,
+    "moderate_count": 0,
     "defense": {
       "meltdown": true,
       "single_budget": 0,
@@ -14,37 +363,37 @@
         {
           "name": "竞价上涨家数",
           "pred": "1500-2200",
-          "real": "~552(开)/798(当前)",
+          "real": "552",
           "dev": 70.2,
           "severity": "🔴"
         },
         {
           "name": "大盘多空开盘",
           "pred": "+0.1%~+0.3%",
-          "real": "-0.74%",
-          "dev": 100.0,
+          "real": "低开 -0.74%",
+          "dev": 100,
           "severity": "🔴"
         },
         {
           "name": "气压计状态",
           "pred": "绿灯或黄灯",
-          "real": "🔴 红灯 (竞价上涨<1000)",
-          "dev": 100.0,
+          "real": "🔴 红灯（竞价上涨552<1000，熔断）",
+          "dev": 100,
           "severity": "🔴"
         },
         {
           "name": "全场涨停数",
           "pred": "60-85只",
-          "real": "待盘中验证",
-          "dev": 20.0,
-          "severity": "🟡"
+          "real": "74只",
+          "dev": 2.1,
+          "severity": "🟢"
         },
         {
           "name": "L4候选期望值",
           "pred": "计提率≥50%",
-          "real": "待盘中验证",
-          "dev": 20.0,
-          "severity": "🟡"
+          "real": "待补（需次日L4表现数据）",
+          "dev": 0,
+          "severity": "⚪"
         }
       ]
     },
@@ -52,37 +401,37 @@
       {
         "name": "竞价上涨家数",
         "pred": "1500-2200",
-        "real": "~552(开)/798(当前)",
+        "real": "552",
         "dev": 70.2,
         "severity": "🔴"
       },
       {
         "name": "大盘多空开盘",
         "pred": "+0.1%~+0.3%",
-        "real": "-0.74%",
-        "dev": 100.0,
+        "real": "低开 -0.74%",
+        "dev": 100,
         "severity": "🔴"
       },
       {
         "name": "气压计状态",
         "pred": "绿灯或黄灯",
-        "real": "🔴 红灯 (竞价上涨<1000)",
-        "dev": 100.0,
+        "real": "🔴 红灯（竞价上涨552<1000，熔断）",
+        "dev": 100,
         "severity": "🔴"
       },
       {
         "name": "全场涨停数",
         "pred": "60-85只",
-        "real": "待盘中验证",
-        "dev": 20.0,
-        "severity": "🟡"
+        "real": "74只",
+        "dev": 2.1,
+        "severity": "🟢"
       },
       {
         "name": "L4候选期望值",
         "pred": "计提率≥50%",
-        "real": "待盘中验证",
-        "dev": 20.0,
-        "severity": "🟡"
+        "real": "待补（需次日L4表现数据）",
+        "dev": 0,
+        "severity": "⚪"
       }
     ],
     "morning_prediction": {
@@ -92,6 +441,33 @@
       "logic": "竞价上涨552只<1000阈值，上证-0.74%，低开承压",
       "timestamp": "2026-06-04T09:34:13"
     },
-    "framework_lock": "Shawn严格"
+    "framework_lock": "Shawn严格",
+    "_audit_note": "气压计熔断日(552家)+三🔴维度→全天禁止开仓",
+    "deep_attribution": {
+      "right": "L1: 🔴 重度偏离 — 单仓预算锁死至1.0万（3维超30%阈值）",
+      "wrong": "L2: 方向预测偏离（准确度40%）",
+      "root_cause": "morning_prediction仍用旧映射（bid_up<1000→弱势）。正确结论应该是'熔断日不做方向预测，直接禁开仓'——当气压计触发时，morning_prediction应切换为'熔断态'而非继续做方向预测。",
+      "fix": "P0: morning_verify Step5增加熔断态判断——当defense.meltdown==true时，morning_prediction市场预测='熔断日，不做方向预测，全天禁开仓'。避免在熔断日给出误导性方向预测。",
+      "patch": "P0: morning_verify Step5增加熔断态判断——当defense.meltdown==true时，morning_prediction市场预测='熔断日，不做方向预测，全天禁开仓'。避免在熔断日给出误导性方向预测。"
+    },
+    "l2_verification": {
+      "market_real": "上证收盘4057.78，+0.10%（开4054→冲4081→砸4043→收4058）。典型'假拉真砸'：早盘冲高+0.67%诱多，下午砸至日内最低4043。552只竞价上涨→气压计熔断。74只涨停。",
+      "sector_real": "领涨：权重护盘板块（金融/消费防御）| 领跌：中小盘题材股普跌。指数微涨但多数个股下跌，缩量至2.88万亿。早盘冲高无资金跟随，主力借拉高减仓。",
+      "stock_real": "空仓（气压计熔断全天禁开仓），无持仓对比。JARVIS正确执行了禁买指令。",
+      "accuracy": 40,
+      "verdict": "偏离",
+      "analysis": "预测'弱势下探-0.5%~-1.0%'，实际收平+0.10%。方向偏悲观但气压计熔断机制正确阻止了开仓——如果没熔断，早盘4080那波很可能追进去被埋。所以虽然L2预测不准，但L1（气压计）→风控链正确。",
+      "root_cause": "morning_prediction仍用旧映射（bid_up<1000→弱势）。正确结论应该是'熔断日不做方向预测，直接禁开仓'——当气压计触发时，morning_prediction应切换为'熔断态'而非继续做方向预测。",
+      "patch": "P0: morning_verify Step5增加熔断态判断——当defense.meltdown==true时，morning_prediction市场预测='熔断日，不做方向预测，全天禁开仓'。避免在熔断日给出误导性方向预测。"
+    },
+    "pdca_checklist": {
+      "trigger": "L2准确度40%，偏离度60%>20%阈值",
+      "deviation_point": "预测弱势下探-0.5%~-1.0%，实际+0.10%平收。早盘冲高+0.67%后下午砸盘——'假拉真砸'走势未被预判。",
+      "root_cause_type": "模型缺陷",
+      "root_cause_detail": "熔断日(bid_up=552<1000)仍沿用旧映射输出方向预测。正确行为：熔断日应拒绝方向预测，直接输出'熔断态，全天禁开仓'。",
+      "patch_location": "market_postmortem.py L930-932: 新增defense.meltdown优先判断",
+      "patch_status": "✅ 06.04已修复 — 熔断态优先于映射表",
+      "logic_debt": false
+    }
   }
 ]

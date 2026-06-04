@@ -1,149 +1,165 @@
 {
-  "date": "2026-06-03",
-  "time": "15:30",
-  "rating": "🟡 预警震荡",
-  "barometer": "🟢 绿灯",
+  "date": "2026-06-04",
+  "time": "15:33",
+  "epoch": "Epoch_002",
+  "rating": "🔴 撤退 — 上证跌破4070",
+  "barometer": "🟡 黄灯",
   "weather": {
-    "sh_close": 4083.97,
-    "sh_open": 4061.46,
-    "sh_high": 4089.57,
-    "sh_low": 4032.58,
-    "sh_chg": 0.22,
-    "volume": 6684525.0,
-    "amount": 142975584.0,
-    "prev_close": 4057.74,
+    "sh_close": 4057.78,
+    "sh_open": null,
+    "sh_high": null,
+    "sh_low": null,
+    "sh_chg": -0.64,
+    "volume_hands": 6211947,
+    "amount_yi": 1274.65,
+    "prev_close": 4083.97,
     "time": "15:30"
   },
   "predictions": {
     "dim1_bid_up_count": {
-      "value": "1500-2200",
-      "logic": "多头排列初期的竞价活跃概率"
+      "predicted": "1500-2200",
+      "actual": "待09:26核验",
+      "deviation": "待核验"
     },
     "dim2_open_direction": {
-      "value": "平开或小幅高开 +0.1%~+0.3%",
-      "logic": "趋势延续的惯性开盘"
+      "predicted": "平开或小幅高开+0.1%~+0.3%",
+      "actual": "上证-0.64% → ❌ 偏差",
+      "deviation": "大幅低开，与预测反向"
     },
     "dim3_barometer": {
-      "value": "绿灯或黄灯",
-      "logic": "放量上涨趋势延续"
+      "predicted": "绿灯或黄灯",
+      "actual": "🟡黄灯（上证跌破4070）",
+      "deviation": "符合下限但恶化"
     },
     "dim4_zt_count": {
-      "value": "60-85只",
-      "logic": "赚钱效应维持高位"
+      "predicted": "60-85只",
+      "actual": "74只（scanner数据）",
+      "deviation": "✅ 符合"
     },
     "dim5_l4_expectation": {
-      "value": "计提率≥50%，均涨幅+1%~+3%",
-      "logic": "多头市场中L4候选次日溢价确定性强"
+      "predicted": "计提率≥50%，均涨幅+1%~+3%",
+      "actual": "昨日L4=0，无法计算计提率；今日L4=4只（全JARVIS放宽，评分40-41低位）",
+      "deviation": "无基数"
     }
   },
   "shawn_l4": [],
-  "jarvis_l4": [],
-  "zt_count": 64,
-  "top_sectors": [
-    [
-      "电力",
-      7
-    ],
-    [
-      "汽车零部",
-      5
-    ],
-    [
-      "专用设备",
-      3
-    ],
-    [
-      "化学原料",
-      3
-    ],
-    [
-      "通信设备",
-      3
-    ]
-  ],
-  "monthly_reviews": [
+  "jarvis_l4": [
     {
-      "review_date": "2026-06-03",
-      "period": "2026.06.01-2026.06.03",
-      "trading_days": 3,
-      "grade": "🟡 数据不足，无阈值调整",
-      "tests": {
-        "ch12_volume_ratio_3_5": {
-          "testable": false,
-          "reason": "量比门槛未接入dual_framework_full.py扫描管道，仅在14章规格书中定义",
-          "days_tested": 0,
-          "false_positives": 0,
-          "false_negatives": "未知",
-          "recommendation": "P1: L2→L3间插入量比过滤层",
-          "adjustment": "功能补全，非数值调整"
-        },
-        "ch13_auction_count_1000": {
-          "testable": true,
-          "days_tested": 3,
-          "triggered_days": 0,
-          "closest_approach": 1015,
-          "closest_date": "2026-06-03",
-          "false_positives": 0,
-          "false_negatives": "无<1000日样本",
-          "trend": "1503→1390→1015，3天降488家",
-          "barometer_seal_consistency": "代理条件与竞价数据一致，无冲突",
-          "recommendation": "1000阈值焊死。新增下沉预警：连续2天<1100→预算0.5万",
-          "adjustment": "无（新增预警线非阈值调整）",
-          "priority": "P2"
-        },
-        "ch13_ma5_death_cross_lock": {
-          "testable": true,
-          "days_tested": 1,
-          "death_cross_active": "6/2起持续",
-          "ma5_0603": 4076.8,
-          "ma10_0603": 4096.59,
-          "system_behavior": "仅缩减预算至1.0万，未锁定Shawn严格",
-          "shawn_l4_mean": 0.91,
-          "jarvis_extra_mean": 0.79,
-          "shawn_tail_lt_minus5": "4% (1/27)",
-          "jarvis_tail_lt_minus5": "8% (6/78)",
-          "verdict": "死叉日Shawn严格尾部风险过滤有效（亏损>5%比例差一倍）。无死叉日则JARVIS放宽胜出。",
-          "recommendation": "P1: 死叉日强制锁定Shawn严格框架，死叉解除自动恢复",
-          "adjustment": "规则新增：morning_defense.json 新增 framework_lock 字段",
-          "priority": "P1"
-        },
-        "ch14_tail_lock_1400": {
-          "testable": false,
-          "reason": "无大盘破位触发尾盘锁仓，无分钟级K线缓存",
-          "days_tested": 0,
-          "recommendation": "P2: 积累10交易日+在market_postmortem.py加入尾盘涨停次日计提率统计",
-          "adjustment": "延后",
-          "priority": "P2"
-        }
-      },
-      "data_quality": {
-        "kline_cache_stale": "6/1-6/3三份dual_framework结果几乎一致，kline_cache.json未按日刷新",
-        "sample_size": "极低（3天，0次熔断，1天死叉），所有结论标记⚠️样本不足",
-        "volume_ratio_gap": "气压计二量比未接入扫描管道——功能缺口"
-      },
-      "action_items": [
-        {
-          "priority": "P1",
-          "item": "MA5死叉→Shawn严格锁仓",
-          "target": "morning_defense.json + market_postmortem.py",
-          "deadline": "2026-06-04盘前"
-        },
-        {
-          "priority": "P1",
-          "item": "量比门槛接入dual_framework_full.py扫描管道",
-          "target": "dual_framework_full.py",
-          "deadline": "2026-06-05"
-        },
-        {
-          "priority": "P2",
-          "item": "竞价下沉预警（连续<1100→预算0.5万）",
-          "target": "morning_defense.json逻辑",
-          "deadline": "2026-06-05"
-        }
-      ]
+      "code": "001382",
+      "name": "新亚电缆",
+      "score": 41.0,
+      "pullback": -8.4,
+      "volume_ratio": 30
+    },
+    {
+      "code": "300219",
+      "name": "鸿利智汇",
+      "score": 40.9,
+      "pullback": -14.5,
+      "volume_ratio": 39
+    },
+    {
+      "code": "300538",
+      "name": "同益股份",
+      "score": 40.9,
+      "pullback": -9.0,
+      "volume_ratio": 38
+    },
+    {
+      "code": "601728",
+      "name": "中国电信",
+      "score": 41.0,
+      "pullback": -17.2,
+      "volume_ratio": 17
     }
   ],
-  "sector_map": {},
-  "sector_ranks": {},
-  "sector_cooling": []
+  "zt_count": 74,
+  "top_sectors": [],
+  "hound_alpha": [
+    {
+      "code": "002806",
+      "name": "华锋股份",
+      "level": "机构控盘",
+      "triggers": 4
+    },
+    {
+      "code": "300489",
+      "name": "光智科技",
+      "level": "机构控盘",
+      "triggers": 3
+    },
+    {
+      "code": "000628",
+      "name": "高新发展",
+      "level": "HOUND_ALPHA",
+      "triggers": 3
+    },
+    {
+      "code": "002342",
+      "name": "巨力索具",
+      "level": "机构控盘",
+      "triggers": 3
+    },
+    {
+      "code": "603373",
+      "name": "安邦护卫",
+      "level": "HOUND_ALPHA",
+      "triggers": 3
+    }
+  ],
+  "paper_trading": {
+    "status": "空仓",
+    "total_asset": 187514.71,
+    "pnl": -12485,
+    "pnl_pct": -6.24
+  },
+  "key_event": "上证跌破4070生命线 → 触发Shawn严格模式强制锁死",
+  "monthly_reviews": {
+    "2026-06": {
+      "review_date": "2026-06-04",
+      "sample_days": 4,
+      "thresholds": {
+        "vol_ratio_3_5": {
+          "chapter": 11,
+          "status": "data_gap",
+          "verdict": "无法验证。双框架L4输出不含逐只盘中量比，无漏杀/误杀数据。需补齐分钟量比日志。",
+          "adjustment": "none",
+          "priority": "P1"
+        },
+        "bid_up_1000": {
+          "chapter": 12,
+          "status": "validated",
+          "meltdown_days": 1,
+          "meltdown_date": "2026-06-04",
+          "borderline_date": "2026-06-03",
+          "borderline_value": 1015,
+          "verdict": "1000阈值焊死。6/4熔断日正确阻止全天开仓(竞价552家)。6/3边界1015未误杀(当日+0.26%,64涨停)。15天交叉验证的36-42%计提率仍成立。零误杀。",
+          "adjustment": "none",
+          "priority": "none"
+        },
+        "ma5_lock_strict": {
+          "chapter": 13,
+          "status": "logic_sound",
+          "lock_days": 2,
+          "lock_dates": ["2026-06-03", "2026-06-04"],
+          "verdict": "锁死逻辑正确。Shawn严格L4=0在4070攻防战中避免了低分候选。但JARVIS放宽版6+4只候选无次日回溯数据，无法做精确框架比较。正常日(6/1)JARVIS放宽完胜(4涨停vs1只避雷)。",
+          "adjustment": "none",
+          "priority": "P1_data_gap"
+        },
+        "afternoon_lock_1400": {
+          "chapter": 14,
+          "status": "data_gap",
+          "verdict": "无法验证。缓存无14:00后偷鸡板清单及次日表现。6/4熔断日锁枪冗余,6/3锁仓日已禁开仓。需补齐偷鸡板日志。",
+          "adjustment": "none",
+          "priority": "P2"
+        }
+      },
+      "summary": "四项阈值均未被本月数据证伪需调整。三项数据管道缺口(P1×2, P2×1)导致部分维度无法验证。下月优先补齐:L4次日回溯+量比日志+偷鸡板日志。",
+      "action_items": [
+        "P1: L4候选次日涨跌幅自动回溯 → 写入evolution memory的l4_next_day_performance",
+        "P1: 每日L4候选的9:30-10:30分钟量比快照日志",
+        "P2: 每日14:00后首板涨停清单+次日竞价表现"
+      ]
+    }
+  }
 }
