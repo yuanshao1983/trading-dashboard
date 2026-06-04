@@ -102,12 +102,21 @@
       "analysis": "预测'弱势下探-0.5%~-1.0%'，实际仅微跌-0.23%。方向对（跌）但幅度严重高估，且完全未预判「指数弱、个股强」的分化格局。核心盲区：过于依赖竞价情绪（bid_up 1503但开盘方向偏弱）而忽视结构性赚钱效应（3700+上涨）。",
       "root_cause": "morning_prediction生成逻辑过于简化：bid_up_ratio<40%→一律判'弱势下探'。未考虑前日(05-29)大跌后的技术修复动能+煤炭/AI应用的结构性做多力量。",
       "patch": "P1: morning_verify Step5需增加'前日涨跌修复预期'因子 + '板块轮动热度'因子。bid_up_ratio<40%不自动=弱势。"
+    },
+    "pdca_checklist": {
+      "trigger": "L2准确度30%，偏离度70%>20%阈值",
+      "deviation_point": "预测上证-0.5%~-1.0%弱势下探，实际仅-0.23%微跌；漏判3700+只个股上涨的结构性赚钱效应",
+      "root_cause_type": "模型缺陷",
+      "root_cause_detail": "morning_prediction映射表仅依赖bid_up_ratio单一因子，bid_up_ratio=30%直接判为'弱势下探'。未接入前日涨跌修复预期、板块轮动热度、个股涨跌比等辅助因子。",
+      "patch_location": "market_postmortem.py L935-940: bid_up_ratio→market_pred映射表",
+      "patch_status": "✅ 06.04已修复 — 重校准为55%/35%/20%三档",
+      "logic_debt": false
     }
   },
   {
     "date": "2026-06-02",
     "time": "09:32:05",
-    "verdict": "🟡 中度偏离 — 单仓预算腰斩至1.25万",
+    "verdict": "🟡 中度偏离 — 单仓预算腰斩至1.25万 ⚠️逻辑负债:隔夜事件扫描",
     "severe_count": 2,
     "defense": {
       "meltdown": false,
@@ -207,6 +216,15 @@
       "analysis": "预测'弱势下探-0.5%~-1.0%'，实际收涨+0.34%且创业板暴涨2.66%。方向完全相反。根本原因：竞价bid_up仅1390（偏弱）触发了弱势预判，但英伟达GTC Taipei催化下的AI硬件板块（通信+6.48%）成为全天最强主线，完全扭转了开盘情绪。",
       "root_cause": "morning_prediction未接入隔夜重大催化因子。英伟达GTC大会是前一天晚上的确定性事件，但竞价模型对此完全无感知。bid_up_count作为唯一情绪代理不可靠。",
       "patch": "P1: morning_verify需接入隔夜事件扫描（英伟达/苹果/特斯拉等巨头发布会、重大政策）。P2: 竞价情绪+隔夜催化双因子模型。"
+    },
+    "pdca_checklist": {
+      "trigger": "L2准确度0%，偏离度100%>20%阈值",
+      "deviation_point": "预测上证弱势下探，实际+0.43%收涨+创业板暴涨2.66%。方向完全相反。",
+      "root_cause_type": "外部突发",
+      "root_cause_detail": "英伟达GTC Taipei大会（隔夜已知事件）催化AI硬件板块（通信+6.48%）。morning_prediction完全未接入隔夜事件因子，对确定性催化无感知。",
+      "patch_location": "market_postmortem.py Step5: 需新增隔夜事件扫描模块（待开发）",
+      "patch_status": "⚠️ 待定修复：需人工注入补丁 — 隔夜事件扫描为新增功能模块，当前系统架构未覆盖",
+      "logic_debt": true
     }
   },
   {
@@ -319,6 +337,15 @@
       "analysis": "预测'弱势下探-0.5%~-1.0%'，实际收涨+0.38%。方向再次相反。morning_prediction中logic字段写'竞价上涨27/133=20%'——实际上bid_up是1015只(20%采样率)，但morning_prediction仍判为弱势。这是预测逻辑的自我矛盾：数据已经显示不弱，但结论仍是弱势。",
       "root_cause": "morning_prediction的bid_up_ratio→market_pred的映射表严重失真。20%竞价上涨率在震荡市中属于中性偏暖，但代码固定判为'弱势下探'。",
       "patch": "P0: 立即修正morning_verify Step5中bid_up_ratio→market_pred的映射表。20-40%→震荡、>40%→偏强、<20%→弱势。旧映射已连续3天给出相反结论。"
+    },
+    "pdca_checklist": {
+      "trigger": "L2准确度10%，偏离度90%>20%阈值",
+      "deviation_point": "预测弱势下探，实际+0.38%收涨+创业板突破4200创历史新高。morning_prediction自相矛盾：logic写'竞价20%'但结论仍是弱势。",
+      "root_cause_type": "模型缺陷",
+      "root_cause_detail": "bid_up_ratio→market_pred映射表在20-40%区间一律输出'弱势下探'，无视实际bid_up_count=1015(>1000阈值)的偏强信号。连续第3天同样错误。",
+      "patch_location": "market_postmortem.py L935-940: 映射表阈值",
+      "patch_status": "✅ 06.04已修复 — 20-35%→震荡偏弱，35-55%→窄幅震荡",
+      "logic_debt": false
     }
   },
   {
@@ -432,6 +459,15 @@
       "analysis": "预测'弱势下探-0.5%~-1.0%'，实际收平+0.10%。方向偏悲观但气压计熔断机制正确阻止了开仓——如果没熔断，早盘4080那波很可能追进去被埋。所以虽然L2预测不准，但L1（气压计）→风控链正确。",
       "root_cause": "morning_prediction仍用旧映射（bid_up<1000→弱势）。正确结论应该是'熔断日不做方向预测，直接禁开仓'——当气压计触发时，morning_prediction应切换为'熔断态'而非继续做方向预测。",
       "patch": "P0: morning_verify Step5增加熔断态判断——当defense.meltdown==true时，morning_prediction市场预测='熔断日，不做方向预测，全天禁开仓'。避免在熔断日给出误导性方向预测。"
+    },
+    "pdca_checklist": {
+      "trigger": "L2准确度40%，偏离度60%>20%阈值",
+      "deviation_point": "预测弱势下探-0.5%~-1.0%，实际+0.10%平收。早盘冲高+0.67%后下午砸盘——'假拉真砸'走势未被预判。",
+      "root_cause_type": "模型缺陷",
+      "root_cause_detail": "熔断日(bid_up=552<1000)仍沿用旧映射输出方向预测。正确行为：熔断日应拒绝方向预测，直接输出'熔断态，全天禁开仓'。",
+      "patch_location": "market_postmortem.py L930-932: 新增defense.meltdown优先判断",
+      "patch_status": "✅ 06.04已修复 — 熔断态优先于映射表",
+      "logic_debt": false
     }
   }
 ]

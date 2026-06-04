@@ -297,6 +297,24 @@ function openDay(i) {
       <div class="collision-body">${l2HTML}</div>
     </div>
     ${attrHTML}
+    ${(()=>{
+      const pdca = day.pdca_checklist;
+      if (!pdca) return '';
+      const debtBadge = pdca.logic_debt ? '<span style="display:inline-block;padding:2px 8px;border-radius:4px;background:rgba(255,61,61,0.1);color:var(--red);font-size:10px;font-weight:700;margin-left:4px;">⚠️ 逻辑负债</span>' : '';
+      const typeColor = pdca.root_cause_type==='模型缺陷'?'var(--orange)':(pdca.root_cause_type==='外部突发'?'var(--red)':'var(--text3)');
+      return `<div class="collision" style="margin-top:16px;">
+        <div class="collision-header" style="background:rgba(255,145,0,0.06);color:var(--orange);border-bottom:1px solid rgba(255,145,0,0.1);">🔄 PDCA归因清单 ${debtBadge}</div>
+        <div class="collision-body">
+          <div class="collision-row"><span class="label">触发条件</span><span class="value" style="color:var(--orange)">${pdca.trigger||'—'}</span></div>
+          <div class="collision-row"><span class="label">① 偏离点</span><span class="value">${pdca.deviation_point||'—'}</span></div>
+          <div class="collision-row"><span class="label">② 根因类型</span><span class="value" style="color:${typeColor};font-weight:700">${pdca.root_cause_type||'—'}</span></div>
+          <div class="collision-row"><span class="label">② 根因详情</span><span class="value">${pdca.root_cause_detail||'—'}</span></div>
+          <div class="collision-row"><span class="label">③ 补丁位置</span><span class="value" style="font-family:monospace;font-size:11px;">${pdca.patch_location||'—'}</span></div>
+          <div class="collision-row"><span class="label">③ 补丁状态</span><span class="value" style="color:${pdca.logic_debt?'var(--red)':'var(--green)'}">${pdca.patch_status||'—'}</span></div>
+          ${pdca.logic_debt ? '<div style="margin-top:10px;padding:10px;background:rgba(255,61,61,0.06);border-radius:8px;font-size:11px;color:var(--red);"><strong>⚠️ 待定修复：需人工注入补丁</strong> — 当前算法无法解释此偏离，已计入系统逻辑负债。</div>' : ''}
+        </div>
+      </div>`;
+    })()}
   `;
   document.getElementById('modal').classList.add('show');
 }
