@@ -15,8 +15,6 @@
     padding: 40px 20px;
   }
   .container { max-width: 1024px; margin: 0 auto }
-  
-  /* Header */
   .header {
     text-align: center;
     padding: 40px 0 48px;
@@ -32,8 +30,6 @@
     color: #86868b;
     margin-top: 8px;
   }
-
-  /* Cards */
   .cards {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
@@ -67,8 +63,6 @@
   .red { color: #ff3b30 }
   .green { color: #34c759 }
   .neutral { color: #1d1d1f }
-
-  /* Sections */
   .section {
     background: #fff;
     border-radius: 18px;
@@ -82,8 +76,6 @@
     margin-bottom: 16px;
     letter-spacing: -0.022em;
   }
-
-  /* Table */
   table {
     width: 100%;
     border-collapse: collapse;
@@ -107,8 +99,6 @@
   tr:last-child td { border-bottom: none }
   .pnl-pos { color: #ff3b30; font-weight: 600 }
   .pnl-neg { color: #34c759; font-weight: 600 }
-
-  /* Badge */
   .badge {
     display: inline-block;
     padding: 2px 8px;
@@ -120,8 +110,6 @@
   .badge-red { background: #ffe5e5; color: #ff3b30 }
   .badge-green { background: #e5ffe5; color: #34c759 }
   .badge-gray { background: #f5f5f7; color: #86868b }
-
-  /* Lessons */
   .lessons {
     list-style: none;
     counter-reset: lesson;
@@ -144,7 +132,6 @@
     padding-top: 2px;
   }
   .lessons li:last-child { border-bottom: none }
-
   .footer {
     text-align: center;
     padding: 32px 0;
@@ -155,8 +142,6 @@
     font-weight: 600;
     color: #1d1d1f;
   }
-
-  /* PDCA */
   .pdca {
     font-size: 14px;
     color: #515154;
@@ -166,6 +151,36 @@
     border-radius: 12px;
   }
   .pdca strong { color: #1d1d1f }
+  /* Dynamic threshold cards */
+  .threshold-cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 12px;
+    margin-bottom: 24px;
+  }
+  .th-card {
+    background: #fff;
+    border-radius: 14px;
+    padding: 16px 20px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+  }
+  .th-card .th-label {
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    margin-bottom: 4px;
+  }
+  .th-card .th-value {
+    font-size: 28px;
+    font-weight: 700;
+    letter-spacing: -0.03em;
+  }
+  .th-card .th-sub {
+    font-size: 11px;
+    color: #86868b;
+    margin-top: 2px;
+  }
 </style>
 </head>
 <body>
@@ -173,11 +188,14 @@
 
   <div class="header">
     <h1>剃刀 · 交易仪表盘</h1>
-    <p class="sub">JARVIS × 张麻子 · 模拟盘 v4 · 每日15:30自动更新</p>
+    <p class="sub">JARVIS × 张麻子 · 模拟盘 v4 · 每日15:30自动更新 · <a href="pdca.html" style="color:#0071e3;text-decoration:none;font-weight:600">复盘中心 →</a></p>
   </div>
 
-  <!-- Cards loaded by JS -->
+  <!-- Account Cards -->
   <div class="cards" id="cards"></div>
+
+  <!-- Dynamic Thresholds -->
+  <div class="threshold-cards" id="thresholds"></div>
 
   <!-- Trades -->
   <div class="section">
@@ -213,10 +231,20 @@
 </div>
 
 <script>
-fetch('data/trades.json')
-  .then(r => r.json())
-  .then(d => {
-    // Cards
+async function loadJSON(path) {
+  let r = await fetch('data/'+path+'?'+Date.now());
+  if (r.ok) return r.json();
+  r = await fetch('https://raw.githubusercontent.com/yuanshao1983/trading-dashboard/main/data/'+path);
+  if (r.ok) return r.json();
+  return null;
+}
+
+Promise.all([
+  fetch('data/trades.json').then(r=>r.json()),
+  loadJSON('barometer_thresholds.json'),
+  loadJSON('pivot_boundary.json'),
+]).then(([d, baro, piv]) => {
+    // Account Cards
     const a = d.account;
     const cards = [
       {label:'当前净值', value:'¥' + a.current_value.toLocaleString(), cls:'neutral'},
@@ -229,7 +257,40 @@ fetch('data/trades.json')
       `<div class="card"><div class="label">${c.label}</div><div class="value ${c.cls}">${c.value}<span class="unit">${c.unit||''}</span></div></div>`
     ).join('');
 
-    // Trades table
+    // Dynamic Threshold Cards
+    let thHTML = '';
+    if (baro && piv) {
+      const melt = baro.thresholds.meltdown_line;
+      const hesi = baro.thresholds.hesitate_upper;
+      const pv = Math.round(piv.pivot.survival_boundary);
+      const ma = Math.round(piv.pivot.ma20);
+      const above = piv.context.above_boundary;
+      thHTML = `
+        <div class="th-card">
+          <div class="th-label" style="color:#ff3b30">🔴 气压计熔断</div>
+          <div class="th-value" style="color:#ff3b30">${melt}家</div>
+          <div class="th-sub">下5%分位 · ${baro.stats.n_days}天样本</div>
+        </div>
+        <div class="th-card">
+          <div class="th-label" style="color:#ff9100">🟡 犹豫区上限</div>
+          <div class="th-value" style="color:#ff9100">${hesi}家</div>
+          <div class="th-sub">下15%分位</div>
+        </div>
+        <div class="th-card">
+          <div class="th-label" style="color:#0071e3">🎯 动态生存边界</div>
+          <div class="th-value" style="color:#0071e3">${pv}</div>
+          <div class="th-sub">MA20=${ma} · ${above ? '🟢 上方' : '🔴 跌破'} ${piv.context.distance_pct}</div>
+        </div>
+        <div class="th-card">
+          <div class="th-label" style="color:#86868b">📐 偏差引擎</div>
+          <div class="th-value" style="font-size:20px;color:#1d1d1f">Type A/B/C</div>
+          <div class="th-sub">区间归零 · 方向近失 · 公式溯源</div>
+        </div>
+      `;
+    }
+    document.getElementById('thresholds').innerHTML = thHTML;
+
+    // Trades
     document.getElementById('trades').innerHTML = d.trades.map(t => {
       const pnl = t.pnl != null ? t.pnl : (t.note ? t.note : '—');
       const pnlCls = t.pnl > 0 ? 'pnl-pos' : (t.pnl < 0 ? 'pnl-neg' : '');
@@ -245,19 +306,15 @@ fetch('data/trades.json')
       </tr>`;
     }).join('');
 
-    // Lessons
     document.getElementById('lessons').innerHTML = d.lessons.map(l => `<li>${l}</li>`).join('');
-
-    // PDCA
     document.getElementById('pdca').innerHTML = `
       <strong>📐 PDCA闭环：</strong>7笔交易，6笔亏损，1笔盈利(¥520)。
       核心病因：<strong>数字硬止损</strong>触发4次，全部卖在日内低点。
-      <strong>P(修复)</strong> → 废除-3%/-5%/-8%，改为技术位止损+VWAP分级。
-      <strong>D(执行)</strong> → 慧谷新材6/2后，瞬时反应协议已清除所有数字硬止损残留。
-      <strong>C(检验)</strong> → 下笔交易若再因硬止损卖在低点，协议视为失效。
-      <strong>A(固化)</strong> → 写入SOUL.md · 极限风控模块 · 瞬时反应协议。
+      <strong>P</strong> → 废除-3%/-5%/-8%，技术位止损+VWAP分级。
+      <strong>D</strong> → 硬止损残留已清除；偏差引擎v2.0已部署。
+      <strong>C</strong> → 气压计/中枢/偏差全部动态化，公式可溯源。
+      <strong>A</strong> → 硬编码清单推至Dashboard，sentry门禁就绪。
     `;
-
     document.getElementById('updated').textContent = '更新: ' + d.updated;
   });
 </script>

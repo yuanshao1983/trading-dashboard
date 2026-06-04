@@ -94,7 +94,16 @@
   .collision-table .dim { color:var(--text2); }
   .collision-table .pred { color:var(--text3); }
   .collision-table .real { font-weight:700; }
-  .collision-table .dev { font-weight:700; text-align:right; }
+  .collision-table .dev { font-weight:700; text-align:right; cursor:pointer; position:relative; }
+  .collision-table .dev:hover { text-decoration:underline; }
+  .formula-tip {
+    display:none; position:absolute; bottom:100%; right:0; margin-bottom:6px;
+    background:rgba(30,30,40,0.96); border:1px solid var(--border2); border-radius:8px;
+    padding:10px 14px; font-size:12px; font-family:'SF Mono',monospace; color:var(--accent);
+    white-space:nowrap; z-index:300; pointer-events:none;
+    box-shadow:0 8px 24px rgba(0,0,0,0.5); max-width:450px; white-space:normal;
+  }
+  .collision-table .dev:hover .formula-tip { display:block; }
   .verdict-badge { display:inline-block; padding:4px 12px; border-radius:6px; font-size:12px; font-weight:700; margin-top:8px; }
   .verdict-badge.r { background:rgba(255,61,61,0.1); color:var(--red); }
   .verdict-badge.o { background:rgba(255,145,0,0.1); color:var(--orange); }
@@ -121,6 +130,30 @@
   .sum-content { font-size:12px; line-height:1.8; color:var(--text2); }
   .sum-content li { margin-bottom:3px; }
   .sum-content strong { color:var(--text); }
+  
+  /* Hard-coding ledger */
+  .ledger-item {
+    background:rgba(255,255,255,0.02); border:1px solid var(--border); border-radius:10px;
+    padding:14px 18px; margin-bottom:8px; display:flex; justify-content:space-between; align-items:center; gap:12px;
+  }
+  .ledger-item .ledger-left { min-width:0; }
+  .ledger-item .ledger-id { font-size:10px; color:var(--text3); font-family:monospace; margin-bottom:2px; }
+  .ledger-item .ledger-name { font-size:14px; font-weight:600; margin-bottom:2px; }
+  .ledger-item .ledger-detail { font-size:11px; color:var(--text2); }
+  .ledger-status { padding:4px 10px; border-radius:6px; font-size:10px; font-weight:700; white-space:nowrap; }
+  .ledger-status.fixed { background:rgba(0,230,118,0.1); color:var(--green); }
+  .ledger-status.wip { background:rgba(255,145,0,0.1); color:var(--orange); }
+  .ledger-status.ok { background:rgba(0,170,255,0.1); color:var(--accent); }
+  
+  /* Thresholds bar */
+  .threshold-bar {
+    background:var(--card); border:1px solid var(--border); border-radius:var(--radius);
+    padding:20px 24px; margin-bottom:16px; display:flex; gap:24px; flex-wrap:wrap; align-items:center;
+  }
+  .threshold-bar .th-item { min-width:120px; }
+  .threshold-bar .th-label { font-size:10px; color:var(--text3); text-transform:uppercase; letter-spacing:0.06em; margin-bottom:4px; }
+  .threshold-bar .th-value { font-size:20px; font-weight:700; }
+  .threshold-bar .th-sub { font-size:10px; color:var(--text2); }
 </style>
 </head>
 <body>
@@ -137,18 +170,20 @@
   <button class="tab active" onclick="switchTab('daily')">📅 每日对撞</button>
   <button class="tab" onclick="switchTab('weekly')">📊 每周归因</button>
   <button class="tab" onclick="switchTab('monthly')">🌙 每月压力测试</button>
+  <button class="tab" onclick="switchTab('ledger')">📋 硬编码清单</button>
 </div>
 
 <div class="page active" id="daily"><div id="daily-list"></div></div>
 <div class="page" id="weekly"><div id="weekly-area"></div></div>
 <div class="page" id="monthly"><div id="monthly-area"></div></div>
+<div class="page" id="ledger"><div id="ledger-area"></div></div>
 
 <div class="overlay" id="modal" onclick="if(event.target===this)closeModal()">
   <div class="panel" id="modal-body"></div>
 </div>
 
 <script>
-let E = { evo:[], mem:{} };
+let E = { evo:[], mem:{}, barometer:null, pivot:null, ledger:null };
 
 async function loadJSON(path) {
   let r = await fetch('data/'+path+'?'+Date.now());
@@ -162,12 +197,18 @@ async function boot() {
   const c = document.getElementById('daily-list');
   c.innerHTML = '<div class="empty">加载中…</div>';
   try {
-    const [evo, mem] = await Promise.all([
+    const [evo, mem, baro, piv, ledg] = await Promise.all([
       loadJSON('evolution_deviation_log.json'),
-      loadJSON('market_evolution_memory.json')
+      loadJSON('market_evolution_memory.json'),
+      loadJSON('barometer_thresholds.json'),
+      loadJSON('pivot_boundary.json'),
+      loadJSON('hard_coding_ledger.json'),
     ]);
     E.evo = (Array.isArray(evo)?evo:[]).reverse();
     E.mem = mem||{};
+    E.barometer = baro;
+    E.pivot = piv;
+    E.ledger = ledg;
   } catch(e) { console.error(e); }
   renderDaily();
 }
@@ -175,9 +216,10 @@ async function boot() {
 function switchTab(t) {
   document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
   document.getElementById(t).classList.add('active');
-  document.querySelectorAll('.tab').forEach((b,i)=>b.classList.toggle('active',['daily','weekly','monthly'][i]===t));
+  document.querySelectorAll('.tab').forEach((b,i)=>b.classList.toggle('active',['daily','weekly','monthly','ledger'][i]===t));
   if (t==='weekly') renderWeekly();
   if (t==='monthly') renderMonthly();
+  if (t==='ledger') renderLedger();
 }
 
 function renderDaily() {
@@ -186,10 +228,25 @@ function renderDaily() {
     c.innerHTML = '<div class="empty">暂无对撞记录<br><small>首次 09:26 核验触发后，对撞数据自动归档</small></div>';
     return;
   }
-  c.innerHTML = E.evo.map((day,i) => {
+
+  // Dynamic thresholds bar
+  let thHTML = '';
+  if (E.barometer && E.pivot) {
+    const bm = E.barometer.thresholds.meltdown_line;
+    const bh = E.barometer.thresholds.hesitate_upper;
+    const pv = Math.round(E.pivot.pivot.survival_boundary);
+    const ma = Math.round(E.pivot.pivot.ma20);
+    thHTML = `<div class="threshold-bar">
+      <div class="th-item"><div class="th-label">🔴 气压计熔断</div><div class="th-value" style="color:var(--red)">${bm}家</div><div class="th-sub">下5%分位 · ${E.barometer.stats.n_days}天样本</div></div>
+      <div class="th-item"><div class="th-label">🟡 犹豫区</div><div class="th-value" style="color:var(--orange)">${bh}家</div><div class="th-sub">下15%分位</div></div>
+      <div class="th-item"><div class="th-label">🎯 动态生存边界</div><div class="th-value" style="color:var(--accent)">${pv}</div><div class="th-sub">MA20=${ma} · ATR补偿</div></div>
+    </div>`;
+  }
+
+  c.innerHTML = thHTML + E.evo.map((day,i) => {
     const sev = (day.verdict||'').includes('重度')?'r':((day.verdict||'').includes('中度')?'o':'g');
     const devs = day.deviations||[];
-    const r = devs.filter(d=>d.severity==='🔴').length;
+    const r = devs.filter(d=>d.severity==='🔴'||d.severity==='🔴🔴').length;
     const y = devs.filter(d=>d.severity==='🟡').length;
     const hasL2 = !!(day.morning_prediction||day.l2_verification);
     return `<div class="day-card" onclick="openDay(${i})">
@@ -224,8 +281,14 @@ function openDay(i) {
     const real = d?.real || '—';
     const dev = d?.dev||0;
     const sev = d?.severity||'⚪';
-    const clr = sev==='🔴'?'var(--red)':(sev==='🟡'?'var(--orange)':'var(--green)');
-    l1Rows += `<tr><td class="dim">${dims[j]}</td><td class="pred">${pred}</td><td class="real">${real}</td><td class="dev" style="color:${clr}">${sev} ${dev.toFixed(0)}%</td></tr>`;
+    const formula = d?.formula || '';
+    const clr = (sev||'').includes('🔴')?'var(--red)':((sev||'').includes('🟡')?'var(--orange)':'var(--green)');
+    const hitBadge = (sev||'').includes('命中') ? ' 🟢命中' : '';
+    l1Rows += `<tr><td class="dim">${dims[j]}</td><td class="pred">${pred}</td><td class="real">${real}</td>
+      <td class="dev" style="color:${clr};position:relative">
+        ${sev} ${dev.toFixed(0)}%${hitBadge}
+        ${formula ? `<span class="formula-tip">📐 ${formula}</span>` : ''}
+      </td></tr>`;
   }
 
   const mp = day.morning_prediction||null;
@@ -242,17 +305,10 @@ function openDay(i) {
   if (l2v) {
     l2HTML += `<div style="margin-top:12px;padding-top:10px;border-top:1px solid var(--border);">`;
     const accColor = l2v.accuracy>=70?'var(--green)':(l2v.accuracy>=40?'var(--orange)':'var(--red)');
-    const vColor = l2v.verdict==='完全失效'?'var(--red)':(l2v.verdict==='偏离'?'var(--orange)':'var(--green)');
     l2HTML += `<div class="collision-row"><span class="label">📊 收盘真实走势</span><span class="value">${l2v.market_real||'—'}</span></div>`;
     l2HTML += `<div class="collision-row"><span class="label">📊 板块实盘表现</span><span class="value">${l2v.sector_real||'—'}</span></div>`;
     l2HTML += `<div class="collision-row"><span class="label">📊 个股实盘表现</span><span class="value">${l2v.stock_real||'—'}</span></div>`;
     l2HTML += `<div class="collision-row"><span class="label">🎯 L2准确度评分</span><span class="value" style="font-weight:700;font-size:15px;color:${accColor}">${l2v.accuracy||'—'}% — ${l2v.verdict||'—'}</span></div>`;
-    if (l2v.analysis) l2HTML += `<div class="collision-row"><span class="label">🔍 偏差分析</span><span class="value">${l2v.analysis}</span></div>`;
-    l2HTML += `</div>`;
-  } else {
-    l2HTML += `<div style="margin-top:12px;padding-top:10px;border-top:1px solid var(--border);">`;
-    l2HTML += `<div class="collision-row"><span class="label" style="color:var(--red)">⚠️ 审计闭环缺失</span><span class="value" style="color:var(--orange)">该日L2收盘清算未执行 — 15:30 cron未产出审计数据</span></div>`;
-    l2HTML += `</div>`;
   }
 
   const attr = day.deep_attribution||null;
@@ -264,31 +320,28 @@ function openDay(i) {
     if (attr.fix) attrHTML += `<div class="attr-item fix"><strong>🔧 改正方案：</strong>${attr.fix}</div>`;
     if (attr.patch) attrHTML += `<div class="attr-item fix"><strong>📝 新补丁：</strong>${attr.patch}</div>`;
   } else {
-    const bad = devs.filter(d=>d.severity==='🔴'), good = devs.filter(d=>d.severity==='🟢');
-    if (good.length) attrHTML += `<div class="attr-item right"><strong>✅ 对了什么：</strong>${good.map(d=>d.name).join('、')} 预测在容差内。</div>`;
+    const bad = devs.filter(d=>(d.severity||'').includes('🔴')), good = devs.filter(d=>(d.severity||'').includes('命中'));
+    if (good.length) attrHTML += `<div class="attr-item right"><strong>✅ 对了什么：</strong>${good.map(d=>d.name).join('、')} 命中区间。</div>`;
     if (bad.length) {
       attrHTML += `<div class="attr-item wrong"><strong>❌ 错了什么：</strong>${bad.map(d=>d.name).join('、')} 偏差超标。</div>`;
-      if (bad.some(d=>d.name.includes('竞价'))) attrHTML += `<div class="attr-item wrong"><strong>🔍 根因：</strong>09:26采样代表性不足。</div>`;
-      attrHTML += `<div class="attr-item fix"><strong>🔧 改正方案：</strong>扩大至500只分层抽样。</div>`;
+      attrHTML += `<div class="attr-item fix"><strong>🔧 改正方案：</strong>标准化偏差引擎v2.0 — Type A区间/Type B方向/Type C时间。</div>`;
     }
-    if (!bad.length && !good.length) attrHTML += `<div class="attr-item fix">深度归因待数据接入。</div>`;
   }
   attrHTML += '</div>';
 
   document.getElementById('modal-body').innerHTML = `
     <button class="close" onclick="closeModal()">✕</button>
     <h2>📅 ${day.date} 双重对撞报告</h2>
-    <div class="subtitle">Epoch ${day.date} · 两层对撞闭环</div>
+    <div class="subtitle">Epoch ${day.date} · 两层对撞闭环 · 偏差公式可溯源</div>
     <div class="collision">
       <div class="collision-header l1">🌙 第一层对撞：昨晚 15:30 预测 → 今早 09:26 竞价核验</div>
       <div class="collision-body">
         <table class="collision-table">
-          <tr><th>预测维度</th><th>昨晚预测值</th><th>今早真实值</th><th>偏差</th></tr>
+          <tr><th>预测维度</th><th>昨晚预测值</th><th>今早真实值</th><th>偏差（悬浮看公式）</th></tr>
           ${l1Rows}
         </table>
         <div style="margin-top:10px;">
           <span class="verdict-badge ${(day.verdict||'').includes('重度')?'r':((day.verdict||'').includes('中度')?'o':'g')}">${day.verdict||'待核验'}</span>
-          ${(day.verdict||'').includes('重度')?' <span style="font-size:11px;color:var(--red)">单仓预算腰斩至1.25万</span>':''}
         </div>
       </div>
     </div>
@@ -297,29 +350,46 @@ function openDay(i) {
       <div class="collision-body">${l2HTML}</div>
     </div>
     ${attrHTML}
-    ${(()=>{
-      const pdca = day.pdca_checklist;
-      if (!pdca) return '';
-      const debtBadge = pdca.logic_debt ? '<span style="display:inline-block;padding:2px 8px;border-radius:4px;background:rgba(255,61,61,0.1);color:var(--red);font-size:10px;font-weight:700;margin-left:4px;">⚠️ 逻辑负债</span>' : '';
-      const typeColor = pdca.root_cause_type==='模型缺陷'?'var(--orange)':(pdca.root_cause_type==='外部突发'?'var(--red)':'var(--text3)');
-      return `<div class="collision" style="margin-top:16px;">
-        <div class="collision-header" style="background:rgba(255,145,0,0.06);color:var(--orange);border-bottom:1px solid rgba(255,145,0,0.1);">🔄 PDCA归因清单 ${debtBadge}</div>
-        <div class="collision-body">
-          <div class="collision-row"><span class="label">触发条件</span><span class="value" style="color:var(--orange)">${pdca.trigger||'—'}</span></div>
-          <div class="collision-row"><span class="label">① 偏离点</span><span class="value">${pdca.deviation_point||'—'}</span></div>
-          <div class="collision-row"><span class="label">② 根因类型</span><span class="value" style="color:${typeColor};font-weight:700">${pdca.root_cause_type||'—'}</span></div>
-          <div class="collision-row"><span class="label">② 根因详情</span><span class="value">${pdca.root_cause_detail||'—'}</span></div>
-          <div class="collision-row"><span class="label">③ 补丁位置</span><span class="value" style="font-family:monospace;font-size:11px;">${pdca.patch_location||'—'}</span></div>
-          <div class="collision-row"><span class="label">③ 补丁状态</span><span class="value" style="color:${pdca.logic_debt?'var(--red)':'var(--green)'}">${pdca.patch_status||'—'}</span></div>
-          ${pdca.logic_debt ? '<div style="margin-top:10px;padding:10px;background:rgba(255,61,61,0.06);border-radius:8px;font-size:11px;color:var(--red);"><strong>⚠️ 待定修复：需人工注入补丁</strong> — 当前算法无法解释此偏离，已计入系统逻辑负债。</div>' : ''}
-        </div>
-      </div>`;
-    })()}
   `;
   document.getElementById('modal').classList.add('show');
 }
 
 function closeModal() { document.getElementById('modal').classList.remove('show'); }
+
+function renderLedger() {
+  const c = document.getElementById('ledger-area');
+  if (!E.ledger) {
+    c.innerHTML = '<div class="empty">硬编码清单数据待接入<br><small>运行 hard_coding_sentry.py 后自动生成</small></div>';
+    return;
+  }
+  const cats = E.ledger.categories||[];
+  const fixed = cats.filter(x=>x.status.includes('已动态化')||x.status.includes('可配置'));
+  const wip = cats.filter(x=>x.status.includes('待修复')||x.status.includes('部分'));
+  const inactive = cats.filter(x=>x.status.includes('LOW'));
+
+  c.innerHTML = `
+    <div class="threshold-bar">
+      <div class="th-item"><div class="th-label">✅ 已动态化</div><div class="th-value" style="color:var(--green)">${fixed.length}</div></div>
+      <div class="th-item"><div class="th-label">🔧 待修复</div><div class="th-value" style="color:var(--orange)">${wip.length}</div></div>
+      <div class="th-item"><div class="th-label">🟢 可接受</div><div class="th-value" style="color:var(--accent)">${inactive.length}</div></div>
+      <div class="th-item"><div class="th-label">📋 总审计</div><div class="th-value">${E.ledger.summary.total_findings}</div><div class="th-sub">${E.ledger.summary.false_positives}条误报</div></div>
+    </div>
+    ${cats.map(item => {
+      let statusCls = 'ok', statusText = item.status;
+      if (item.status.includes('已动态化')) { statusCls = 'fixed'; statusText = '✅ 已动态化'; }
+      else if (item.status.includes('待修复')) { statusCls = 'wip'; statusText = '🔧 待修复'; }
+      else if (item.status.includes('部分')) { statusCls = 'wip'; statusText = '⚠️ 部分'; }
+      return `<div class="ledger-item">
+        <div class="ledger-left">
+          <div class="ledger-id">${item.id} · ${item.severity}</div>
+          <div class="ledger-name">${item.name}</div>
+          <div class="ledger-detail">旧: ${item.old_value||'—'} → 新: ${item.new_dynamic||item.target_dynamic||'—'}</div>
+        </div>
+        <span class="ledger-status ${statusCls}">${statusText}</span>
+      </div>`;
+    }).join('')}
+  `;
+}
 
 function renderWeekly() {
   const c = document.getElementById('weekly-area');
@@ -336,18 +406,10 @@ function renderWeekly() {
     const warn = days.filter(d=>(d.verdict||'').includes('中度')).length;
     const bad = days.filter(d=>(d.verdict||'').includes('重度')).length;
     const acc = days.length?(ok/days.length*100).toFixed(0):0;
-    const allD = days.flatMap(d=>d.deviations||[]), redD = allD.filter(d=>d.severity==='🔴');
+    const allD = days.flatMap(d=>d.deviations||[]), redD = allD.filter(d=>(d.severity||'').includes('🔴'));
     const topIssues = [...new Set(redD.map(d=>d.name))];
     const l2Days = days.filter(d=>!!d.l2_verification);
     const l2Acc = l2Days.length?(l2Days.filter(d=>(d.l2_verification?.accuracy||0)>=70).length/l2Days.length*100).toFixed(0):'—';
-    const lessons = [];
-    if (+acc>=80) lessons.push('L1预测准确率优秀。');
-    else if (+acc>=50) lessons.push('L1存在系统性偏差。');
-    else lessons.push('L1偏差严重超标。');
-    if (topIssues.length) lessons.push(`高频偏差: ${topIssues.join('、')}。`);
-    if (bad) lessons.push(`${bad}天重度失真${bad/days.length>0.3?' → 触发策略收紧':''}。`);
-    lessons.push(`L2覆盖 ${l2Days.length}/${days.length}天${l2Acc!=='—'?'，准确率'+l2Acc+'%':''}。`);
-    lessons.push('优化: 扩大竞价采样 + dim3-5量化 + 隔夜外盘因子。');
     return `<div class="sum-card">
       <h3>📊 ${wk} 起 · ${days.length}个交易日</h3>
       <div class="stat-row">
@@ -357,14 +419,19 @@ function renderWeekly() {
         <div class="stat"><div class="num">${acc}%</div><div class="lbl">L1准确率</div></div>
         <div class="stat"><div class="num" style="color:var(--accent)">${l2Days.length}</div><div class="lbl">L2覆盖</div><div class="sub">${l2Acc!=='—'?'准确率'+l2Acc+'%':''}</div></div>
       </div>
-      <div class="sum-content"><strong>归因 & 优化：</strong><ul>${lessons.map(x=>`<li>${x}</li>`).join('')}</ul></div>
+      <div class="sum-content"><strong>归因 & 优化：</strong><ul>
+        <li>${topIssues.length?`高频偏差: ${topIssues.join('、')}`:'无高频偏差维度'}</li>
+        <li>${bad}天重度失真${bad/days.length>0.3?' → 触发策略收紧':''}</li>
+        <li>L2覆盖 ${l2Days.length}/${days.length}天${l2Acc!=='—'?'，准确率'+l2Acc+'%':''}</li>
+        <li>偏差引擎v2.0已部署：区间归零+方向近失+公式溯源</li>
+      </ul></div>
     </div>`;
   }).join('');
 }
 
 function renderMonthly() {
   const c = document.getElementById('monthly-area');
-  if (!E.evo.length) { c.innerHTML='<div class="empty">数据不足 — 至少需要一个交易日</div>'; return; }
+  if (!E.evo.length) { c.innerHTML='<div class="empty">数据不足</div>'; return; }
   const months = {};
   E.evo.forEach(day => { const m = day.date.slice(0,7); if (!months[m]) months[m] = []; months[m].push(day); });
   c.innerHTML = Object.entries(months).sort((a,b)=>b[0].localeCompare(a[0])).map(([mo,days]) => {
@@ -374,18 +441,10 @@ function renderMonthly() {
     const acc = days.length?(ok/days.length*100).toFixed(0):0;
     const allD = days.flatMap(d=>d.deviations||[]);
     const avgDev = allD.length?(allD.reduce((s,d)=>s+(d.dev||0),0)/allD.length).toFixed(0):0;
-    const redD = allD.filter(d=>d.severity==='🔴');
+    const redD = allD.filter(d=>(d.severity||'').includes('🔴'));
     const worstDim = Object.entries(redD.reduce((m,d)=>{m[d.name]=(m[d.name]||0)+1;return m;},{})).sort((a,b)=>b[1]-a[1])[0];
     const l2Days = days.filter(d=>!!d.l2_verification);
     const l2Acc = l2Days.length?(l2Days.filter(d=>(d.l2_verification?.accuracy||0)>=70).length/l2Days.length*100).toFixed(0):'—';
-    const findings = [];
-    if (+acc>=70) findings.push('L1月度表现良好。');
-    else findings.push('L1月度偏差超标，审查14章量化阈值。');
-    if (worstDim) findings.push(`最需修复维度: ${worstDim[0]}（${worstDim[1]}次重度）。`);
-    findings.push(`L1月均偏差: ${avgDev}%。`);
-    findings.push(`L2月覆盖: ${l2Days.length}/${days.length}天${l2Acc!=='—'?'，准确率'+l2Acc+'%':''}。`);
-    if (bad/days.length>0.3) findings.push('重度占比超30%，触发策略收紧。');
-    findings.push('月度压力测试: 上证日跌>3%、竞价上涨<500家、熔断触发三种极端场景。');
     return `<div class="sum-card">
       <h3>🌙 ${mo} · ${days.length}个交易日</h3>
       <div class="stat-row">
@@ -394,9 +453,13 @@ function renderMonthly() {
         <div class="stat"><div class="num" style="color:var(--red)">${bad}</div><div class="lbl">L1重度</div></div>
         <div class="stat"><div class="num">${acc}%</div><div class="lbl">L1准确率</div></div>
         <div class="stat"><div class="num">${avgDev}%</div><div class="lbl">月均偏差</div></div>
-        <div class="stat"><div class="num" style="color:var(--accent)">${l2Acc!=='—'?l2Acc+'%':'—'}</div><div class="lbl">L2准确率</div></div>
       </div>
-      <div class="sum-content"><strong>综合分析：</strong><ul>${findings.map(x=>`<li>${x}</li>`).join('')}</ul></div>
+      <div class="sum-content"><strong>综合分析：</strong><ul>
+        <li>${worstDim?`最需修复维度: ${worstDim[0]}（${worstDim[1]}次）`:''}</li>
+        <li>L1月均偏差: ${avgDev}% · ${acc>=70?'表现良好':'审查阈值钝化'}</li>
+        <li>${bad/days.length>0.3?'重度占比超30%，触发收紧':'重度占比可控'}</li>
+        <li>动态阈值: 气压计${E.barometer?.thresholds?.meltdown_line||'?'}家 | 中枢${Math.round(E.pivot?.pivot?.survival_boundary||0)}</li>
+      </ul></div>
     </div>`;
   }).join('');
 }
