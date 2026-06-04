@@ -1,142 +1,44 @@
-[
-  {
-    "date": "2026-06-01",
-    "time": "16:24:58",
-    "verdict": "🟡 中度偏离 — 单仓预算腰斩至1.25万",
-    "severe_count": 1,
-    "defense": {
-      "meltdown": false,
-      "single_budget": 1.25,
-      "reason": "09:26核验触发1维度重度失真: dim1_偏差58%",
-      "timestamp": "2026-06-01T16:24:58.068509",
-      "deviations": [
-        {
-          "name": "竞价上涨家数",
-          "pred": "800-1100",
-          "real": "1503",
-          "dev": 58.21052631578948,
-          "severity": "🔴"
-        },
-        {
-          "name": "大盘多空开盘",
-          "pred": "低开 -0.3%~-0.6%",
-          "real": "低开 -0.27%",
-          "dev": 0,
-          "severity": "🟢"
-        }
-      ]
+{
+  "date": "2026-06-04",
+  "time": "09:34:13",
+  "sh_open": 4053.67,
+  "sh_prev_close": 4083.97,
+  "open_chg_pct": -0.74,
+  "bid_up_estimated": 552,
+  "severity": "🔴 重度",
+  "prediction_deviation": {
+    "dim1_bid_up_count": {
+      "pred": "1500-2200",
+      "actual": "~552(开)/798(当前)",
+      "deviation": "严重偏低",
+      "status": "🔴"
     },
-    "deviations": [
-      {
-        "name": "竞价上涨家数",
-        "pred": "800-1100",
-        "real": "1503",
-        "dev": 58.21052631578948,
-        "severity": "🔴"
-      },
-      {
-        "name": "大盘多空开盘",
-        "pred": "低开 -0.3%~-0.6%",
-        "real": "低开 -0.27%",
-        "dev": 0,
-        "severity": "🟢"
-      }
-    ]
+    "dim2_open_direction": {
+      "pred": "+0.1%~+0.3%",
+      "actual": "-0.74%",
+      "deviation": "方向完全相反",
+      "status": "🔴"
+    },
+    "dim3_barometer": {
+      "pred": "绿灯或黄灯",
+      "actual": "🔴 红灯 (竞价上涨<1000)",
+      "deviation": "降两级",
+      "status": "🔴"
+    },
+    "dim4_zt_count": {
+      "pred": "60-85只",
+      "actual": "待盘中验证",
+      "deviation": "待定",
+      "status": "🟡"
+    },
+    "dim5_l4_expectation": {
+      "pred": "计提率≥50%",
+      "actual": "待盘中验证",
+      "deviation": "待定",
+      "status": "🟡"
+    }
   },
-  {
-    "date": "2026-06-02",
-    "time": "09:32:05",
-    "verdict": "🟡 中度偏离 — 单仓预算腰斩至1.25万",
-    "severe_count": 1,
-    "defense": {
-      "meltdown": false,
-      "single_budget": 1.25,
-      "reason": "09:26核验触发1维度重度失真: dim1_偏差46%",
-      "timestamp": "2026-06-02T09:32:05.472968",
-      "deviations": [
-        {
-          "name": "竞价上涨家数",
-          "pred": "800-1100",
-          "real": "1390",
-          "dev": 46.31578947368421,
-          "severity": "🔴"
-        },
-        {
-          "name": "大盘多空开盘",
-          "pred": "低开 -0.3%~-0.6%",
-          "real": "低开 +0.00%",
-          "dev": 0,
-          "severity": "🟢"
-        }
-      ]
-    },
-    "deviations": [
-      {
-        "name": "竞价上涨家数",
-        "pred": "800-1100",
-        "real": "1390",
-        "dev": 46.31578947368421,
-        "severity": "🔴"
-      },
-      {
-        "name": "大盘多空开盘",
-        "pred": "低开 -0.3%~-0.6%",
-        "real": "低开 +0.00%",
-        "dev": 0,
-        "severity": "🟢"
-      }
-    ]
-  },
-  {
-    "date": "2026-06-03",
-    "time": "09:26:46",
-    "verdict": "🔴 重度偏离 — 单仓预算锁死至1.0万（1维超30%阈值）",
-    "severe_count": 1,
-    "defense": {
-      "meltdown": false,
-      "single_budget": 1.0,
-      "reason": "09:26核验: 1维度突破30%重度线(dim1_偏差45%)。强制启动盘后归因追责，不准打太极。",
-      "timestamp": "2026-06-03T09:26:46.832090",
-      "deviations": [
-        {
-          "name": "竞价上涨家数",
-          "pred": "1500-2200",
-          "real": "1015",
-          "dev": 45.13513513513514,
-          "severity": "🔴"
-        },
-        {
-          "name": "大盘多空开盘",
-          "pred": "平开或小幅高开 +0.1%~+0.3%",
-          "real": "高开 +0.26%",
-          "dev": 0,
-          "severity": "🟢"
-        }
-      ]
-    },
-    "deviations": [
-      {
-        "name": "竞价上涨家数",
-        "pred": "1500-2200",
-        "real": "1015",
-        "dev": 45.13513513513514,
-        "severity": "🔴"
-      },
-      {
-        "name": "大盘多空开盘",
-        "pred": "平开或小幅高开 +0.1%~+0.3%",
-        "real": "高开 +0.26%",
-        "dev": 0,
-        "severity": "🟢"
-      }
-    ],
-    "morning_prediction": {
-      "market": "上证预计弱势下探，-0.5%~-1.0%。竞价上涨仅20%，空头主导开盘",
-      "sectors": "待板块实盘数据确认（09:30开盘后拉东方财富行业涨幅TOP5进行二次修正）",
-      "stocks": "空仓状态，无持仓股需预测。L4候选标的待09:30开盘后根据板块资金二次筛选。",
-      "logic": "竞价上涨27/133=20%，上证+0.26%，平开震荡",
-      "timestamp": "2026-06-03T09:26:46.832090"
-    },
-    "moderate_count": 0
-  }
-]
+  "root_cause": "隔夜外盘走弱(日经-1.6%)+MA5死叉惯性+竞价情绪极度冰点，远超昨日预测的平开偏暖",
+  "action_taken": "全天熔断 — 所有秒杀指令失效，全天禁止开仓",
+  "framework_lock": "Shawn严格"
+}

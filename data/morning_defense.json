@@ -1,22 +1,25 @@
 {
-  "meltdown": false,
-  "single_budget": 1.0,
-  "reason": "09:26核验: 1维度突破30%重度线(dim1_偏差45%)。强制启动盘后归因追责，不准打太极。",
-  "timestamp": "2026-06-03T09:26:46.832090",
-  "deviations": [
-    {
-      "name": "竞价上涨家数",
-      "pred": "1500-2200",
-      "real": "1015",
-      "dev": 45.13513513513514,
-      "severity": "🔴"
-    },
-    {
-      "name": "大盘多空开盘",
-      "pred": "平开或小幅高开 +0.1%~+0.3%",
-      "real": "高开 +0.26%",
-      "dev": 0,
-      "severity": "🟢"
-    }
+  "date": "2026-06-04",
+  "time": "09:34:13",
+  "severity": "🔴 重度",
+  "barometer_trigger": true,
+  "bid_up_count_estimated": 552,
+  "ma5_death_cross": true,
+  "framework_lock": "Shawn严格",
+  "action": "全天熔断 — 所有秒杀指令失效，全天禁止开仓",
+  "budget_per_position": 0,
+  "red_dimensions": 3,
+  "yellow_dimensions": 2,
+  "matrix_subtraction": {
+    "dim1": "预测1500-2200 → 实际~552 → 偏差>50%",
+    "dim2": "预测+0.1%~+0.3% → 实际-0.74% → 方向相反",
+    "dim3": "预测绿灯/黄灯 → 实际🔴红灯(竞价<1000)",
+    "dim4": "待盘中验证",
+    "dim5": "待盘中验证"
+  },
+  "triggered_rules": [
+    "气压计三熔断: 竞价上涨家数<1000",
+    "MA5死叉: 强制锁定Shawn严格框架",
+    "5维预测≥2维度失真: 全天熔断"
   ]
 }
