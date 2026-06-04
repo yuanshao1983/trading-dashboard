@@ -85,7 +85,14 @@
       }
     ],
     "_audit_note": "采样时间16:24(非09:25窗口)+仅2维→06.02审计后修复",
-    "moderate_count": 0
+    "moderate_count": 0,
+    "deep_attribution": {
+      "right": "L1: 大盘多空开盘预测准确（方向+幅度均在容差内）",
+      "wrong": "L1: 竞价上涨家数偏差58%（预测800-1100 vs 实际1503）",
+      "root_cause": "采样代表性严重不足：仅硬编码3段×50=150只，漏掉002中小板/601/603/605板块",
+      "fix": "✅ 2026.06.04已修复：7板块分层随机抽样500只（sh600/sh601/sh603/sh605/sz000/sz002/sz300），每层~70只，缓存7天",
+      "patch": "market_postmortem.py L696-743: 旧硬编码→分层随机+缓存采样池"
+    }
   },
   {
     "date": "2026-06-02",
@@ -173,7 +180,14 @@
       }
     ],
     "_audit_note": "09:11时空污染版已清除→此条为09:32修正版；verdict按旧逻辑(severe>=2才🔴)判🟡，按焊死线应为🔴",
-    "moderate_count": 0
+    "moderate_count": 0,
+    "deep_attribution": {
+      "right": "—",
+      "wrong": "dim1竞价上涨家数持续偏差（采样代表性不足的延续影响）",
+      "root_cause": "同06-01根因：150只硬编码采样，漏掉中小板+上证中盘",
+      "fix": "✅ 2026.06.04已修复（同06-01补丁）",
+      "patch": "market_postmortem.py L696-743"
+    }
   },
   {
     "date": "2026-06-03",
@@ -268,7 +282,14 @@
       "timestamp": "2026-06-03T09:26:46.832090"
     },
     "moderate_count": 0,
-    "_audit_note": "首条含morning_prediction(L2第一环)；dim1偏差45%→单仓1.0万"
+    "_audit_note": "首条含morning_prediction(L2第一环)；dim1偏差45%→单仓1.0万",
+    "deep_attribution": {
+      "right": "—",
+      "wrong": "dim1竞价上涨家数持续偏差（采样代表性不足的延续影响）",
+      "root_cause": "同06-01根因：150只硬编码采样，漏掉中小板+上证中盘",
+      "fix": "✅ 2026.06.04已修复（同06-01补丁）",
+      "patch": "market_postmortem.py L696-743"
+    }
   },
   {
     "date": "2026-06-04",
@@ -364,6 +385,13 @@
       "timestamp": "2026-06-04T09:34:13"
     },
     "framework_lock": "Shawn严格",
-    "_audit_note": "气压计熔断日(552家)+三🔴维度→全天禁止开仓"
+    "_audit_note": "气压计熔断日(552家)+三🔴维度→全天禁止开仓",
+    "deep_attribution": {
+      "right": "—",
+      "wrong": "dim1竞价上涨家数持续偏差（采样代表性不足的延续影响）",
+      "root_cause": "同06-01根因：150只硬编码采样，漏掉中小板+上证中盘",
+      "fix": "✅ 2026.06.04已修复（同06-01补丁）",
+      "patch": "market_postmortem.py L696-743"
+    }
   }
 ]
