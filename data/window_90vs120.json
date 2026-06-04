@@ -1,0 +1,321 @@
+{
+  "90d": {
+    "window": 90,
+    "data_points": 90,
+    "date_range": "2026-01-16 → 2026-06-04",
+    "score_distribution": {
+      "min": -163.1,
+      "p10": -28.4,
+      "p20": -4.0,
+      "p50": 43.8,
+      "p80": 73.6,
+      "max": 167.1,
+      "mean": 35.9,
+      "stdev": 49.2
+    },
+    "p20_threshold": -4.0,
+    "p20_volatility": 3.37,
+    "p20_rolling_range": [
+      -4.9,
+      3.9
+    ],
+    "detection": {
+      "total_bad_days": 8,
+      "hits": 8,
+      "misses": 0,
+      "false_alarms": 5,
+      "recall": 100.0,
+      "precision": 61.5
+    },
+    "recent_20d_trace": [
+      {
+        "date": "2026-05-08",
+        "close_chg": -0.0,
+        "breadth": 39.4,
+        "below_p20": false
+      },
+      {
+        "date": "2026-05-11",
+        "close_chg": 1.08,
+        "breadth": 88.3,
+        "below_p20": false
+      },
+      {
+        "date": "2026-05-12",
+        "close_chg": -0.25,
+        "breadth": 26.7,
+        "below_p20": false
+      },
+      {
+        "date": "2026-05-13",
+        "close_chg": 0.67,
+        "breadth": 68.0,
+        "below_p20": false
+      },
+      {
+        "date": "2026-05-14",
+        "close_chg": -1.52,
+        "breadth": -49.6,
+        "below_p20": true
+      },
+      {
+        "date": "2026-05-15",
+        "close_chg": -1.02,
+        "breadth": -22.5,
+        "below_p20": true
+      },
+      {
+        "date": "2026-05-18",
+        "close_chg": -0.09,
+        "breadth": 35.8,
+        "below_p20": false
+      },
+      {
+        "date": "2026-05-19",
+        "close_chg": 0.92,
+        "breadth": 79.9,
+        "below_p20": false
+      },
+      {
+        "date": "2026-05-20",
+        "close_chg": -0.18,
+        "breadth": 33.1,
+        "below_p20": false
+      },
+      {
+        "date": "2026-05-21",
+        "close_chg": -2.04,
+        "breadth": -84.2,
+        "below_p20": true
+      },
+      {
+        "date": "2026-05-22",
+        "close_chg": 0.87,
+        "breadth": 78.7,
+        "below_p20": false
+      },
+      {
+        "date": "2026-05-25",
+        "close_chg": 0.96,
+        "breadth": 88.5,
+        "below_p20": false
+      },
+      {
+        "date": "2026-05-26",
+        "close_chg": -0.17,
+        "breadth": 29.9,
+        "below_p20": false
+      },
+      {
+        "date": "2026-05-27",
+        "close_chg": -1.25,
+        "breadth": -30.8,
+        "below_p20": true
+      },
+      {
+        "date": "2026-05-28",
+        "close_chg": 0.12,
+        "breadth": 41.1,
+        "below_p20": false
+      },
+      {
+        "date": "2026-05-29",
+        "close_chg": -0.73,
+        "breadth": -2.4,
+        "below_p20": false
+      },
+      {
+        "date": "2026-06-01",
+        "close_chg": -0.27,
+        "breadth": 25.0,
+        "below_p20": false
+      },
+      {
+        "date": "2026-06-02",
+        "close_chg": 0.43,
+        "breadth": 56.3,
+        "below_p20": false
+      },
+      {
+        "date": "2026-06-03",
+        "close_chg": 0.22,
+        "breadth": 49.0,
+        "below_p20": false
+      },
+      {
+        "date": "2026-06-04",
+        "close_chg": -0.64,
+        "breadth": 7.1,
+        "below_p20": false
+      }
+    ]
+  },
+  "120d": {
+    "window": 120,
+    "data_points": 120,
+    "date_range": "2025-12-03 → 2026-06-04",
+    "score_distribution": {
+      "min": -163.1,
+      "p10": -20.9,
+      "p20": 3.9,
+      "p50": 44.4,
+      "p80": 73.6,
+      "max": 167.1,
+      "mean": 38.6,
+      "stdev": 45.5
+    },
+    "p20_threshold": 3.9,
+    "p20_volatility": 1.03,
+    "p20_rolling_range": [
+      3.9,
+      6.4
+    ],
+    "detection": {
+      "total_bad_days": 8,
+      "hits": 8,
+      "misses": 0,
+      "false_alarms": 7,
+      "recall": 100.0,
+      "precision": 53.3
+    },
+    "recent_20d_trace": [
+      {
+        "date": "2026-05-08",
+        "close_chg": -0.0,
+        "breadth": 39.4,
+        "below_p20": false
+      },
+      {
+        "date": "2026-05-11",
+        "close_chg": 1.08,
+        "breadth": 88.3,
+        "below_p20": false
+      },
+      {
+        "date": "2026-05-12",
+        "close_chg": -0.25,
+        "breadth": 26.7,
+        "below_p20": false
+      },
+      {
+        "date": "2026-05-13",
+        "close_chg": 0.67,
+        "breadth": 68.0,
+        "below_p20": false
+      },
+      {
+        "date": "2026-05-14",
+        "close_chg": -1.52,
+        "breadth": -49.6,
+        "below_p20": true
+      },
+      {
+        "date": "2026-05-15",
+        "close_chg": -1.02,
+        "breadth": -22.5,
+        "below_p20": true
+      },
+      {
+        "date": "2026-05-18",
+        "close_chg": -0.09,
+        "breadth": 35.8,
+        "below_p20": false
+      },
+      {
+        "date": "2026-05-19",
+        "close_chg": 0.92,
+        "breadth": 79.9,
+        "below_p20": false
+      },
+      {
+        "date": "2026-05-20",
+        "close_chg": -0.18,
+        "breadth": 33.1,
+        "below_p20": false
+      },
+      {
+        "date": "2026-05-21",
+        "close_chg": -2.04,
+        "breadth": -84.2,
+        "below_p20": true
+      },
+      {
+        "date": "2026-05-22",
+        "close_chg": 0.87,
+        "breadth": 78.7,
+        "below_p20": false
+      },
+      {
+        "date": "2026-05-25",
+        "close_chg": 0.96,
+        "breadth": 88.5,
+        "below_p20": false
+      },
+      {
+        "date": "2026-05-26",
+        "close_chg": -0.17,
+        "breadth": 29.9,
+        "below_p20": false
+      },
+      {
+        "date": "2026-05-27",
+        "close_chg": -1.25,
+        "breadth": -30.8,
+        "below_p20": true
+      },
+      {
+        "date": "2026-05-28",
+        "close_chg": 0.12,
+        "breadth": 41.1,
+        "below_p20": false
+      },
+      {
+        "date": "2026-05-29",
+        "close_chg": -0.73,
+        "breadth": -2.4,
+        "below_p20": true
+      },
+      {
+        "date": "2026-06-01",
+        "close_chg": -0.27,
+        "breadth": 25.0,
+        "below_p20": false
+      },
+      {
+        "date": "2026-06-02",
+        "close_chg": 0.43,
+        "breadth": 56.3,
+        "below_p20": false
+      },
+      {
+        "date": "2026-06-03",
+        "close_chg": 0.22,
+        "breadth": 49.0,
+        "below_p20": false
+      },
+      {
+        "date": "2026-06-04",
+        "close_chg": -0.64,
+        "breadth": 7.1,
+        "below_p20": false
+      }
+    ]
+  },
+  "divergent_days": [
+    {
+      "date": "2026-03-09",
+      "close_chg": -0.67,
+      "breadth": -0.9,
+      "90d": "🟢OK",
+      "120d": "🔴MELT"
+    },
+    {
+      "date": "2026-05-29",
+      "close_chg": -0.73,
+      "breadth": -2.4,
+      "90d": "🟢OK",
+      "120d": "🔴MELT"
+    }
+  ],
+  "verdict": "90天更优"
+}
