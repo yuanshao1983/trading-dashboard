@@ -1,44 +1,97 @@
-{
-  "date": "2026-06-04",
-  "time": "09:34:13",
-  "sh_open": 4053.67,
-  "sh_prev_close": 4083.97,
-  "open_chg_pct": -0.74,
-  "bid_up_estimated": 552,
-  "severity": "🔴 重度",
-  "prediction_deviation": {
-    "dim1_bid_up_count": {
-      "pred": "1500-2200",
-      "actual": "~552(开)/798(当前)",
-      "deviation": "严重偏低",
-      "status": "🔴"
+[
+  {
+    "date": "2026-06-04",
+    "time": "09:34:13",
+    "verdict": "🔴 重度偏离 — 单仓预算锁死至1.0万（3维超30%阈值）",
+    "severe_count": 3,
+    "moderate_count": 2,
+    "defense": {
+      "meltdown": true,
+      "single_budget": 0,
+      "reason": "隔夜外盘走弱(日经-1.6%)+MA5死叉惯性+竞价情绪极度冰点，远超昨日预测的平开偏暖 | 全天熔断 — 所有秒杀指令失效，全天禁止开仓",
+      "timestamp": "2026-06-04T09:34:13",
+      "deviations": [
+        {
+          "name": "竞价上涨家数",
+          "pred": "1500-2200",
+          "real": "~552(开)/798(当前)",
+          "dev": 70.2,
+          "severity": "🔴"
+        },
+        {
+          "name": "大盘多空开盘",
+          "pred": "+0.1%~+0.3%",
+          "real": "-0.74%",
+          "dev": 100.0,
+          "severity": "🔴"
+        },
+        {
+          "name": "气压计状态",
+          "pred": "绿灯或黄灯",
+          "real": "🔴 红灯 (竞价上涨<1000)",
+          "dev": 100.0,
+          "severity": "🔴"
+        },
+        {
+          "name": "全场涨停数",
+          "pred": "60-85只",
+          "real": "待盘中验证",
+          "dev": 20.0,
+          "severity": "🟡"
+        },
+        {
+          "name": "L4候选期望值",
+          "pred": "计提率≥50%",
+          "real": "待盘中验证",
+          "dev": 20.0,
+          "severity": "🟡"
+        }
+      ]
     },
-    "dim2_open_direction": {
-      "pred": "+0.1%~+0.3%",
-      "actual": "-0.74%",
-      "deviation": "方向完全相反",
-      "status": "🔴"
+    "deviations": [
+      {
+        "name": "竞价上涨家数",
+        "pred": "1500-2200",
+        "real": "~552(开)/798(当前)",
+        "dev": 70.2,
+        "severity": "🔴"
+      },
+      {
+        "name": "大盘多空开盘",
+        "pred": "+0.1%~+0.3%",
+        "real": "-0.74%",
+        "dev": 100.0,
+        "severity": "🔴"
+      },
+      {
+        "name": "气压计状态",
+        "pred": "绿灯或黄灯",
+        "real": "🔴 红灯 (竞价上涨<1000)",
+        "dev": 100.0,
+        "severity": "🔴"
+      },
+      {
+        "name": "全场涨停数",
+        "pred": "60-85只",
+        "real": "待盘中验证",
+        "dev": 20.0,
+        "severity": "🟡"
+      },
+      {
+        "name": "L4候选期望值",
+        "pred": "计提率≥50%",
+        "real": "待盘中验证",
+        "dev": 20.0,
+        "severity": "🟡"
+      }
+    ],
+    "morning_prediction": {
+      "market": "上证预计弱势下探，-0.5%~-1.0%。竞价上涨仅552/5000≈11%，空头主导开盘",
+      "sectors": "待板块实盘数据确认",
+      "stocks": "空仓状态，L4候选待09:30开盘二次筛选",
+      "logic": "竞价上涨552只<1000阈值，上证-0.74%，低开承压",
+      "timestamp": "2026-06-04T09:34:13"
     },
-    "dim3_barometer": {
-      "pred": "绿灯或黄灯",
-      "actual": "🔴 红灯 (竞价上涨<1000)",
-      "deviation": "降两级",
-      "status": "🔴"
-    },
-    "dim4_zt_count": {
-      "pred": "60-85只",
-      "actual": "待盘中验证",
-      "deviation": "待定",
-      "status": "🟡"
-    },
-    "dim5_l4_expectation": {
-      "pred": "计提率≥50%",
-      "actual": "待盘中验证",
-      "deviation": "待定",
-      "status": "🟡"
-    }
-  },
-  "root_cause": "隔夜外盘走弱(日经-1.6%)+MA5死叉惯性+竞价情绪极度冰点，远超昨日预测的平开偏暖",
-  "action_taken": "全天熔断 — 所有秒杀指令失效，全天禁止开仓",
-  "framework_lock": "Shawn严格"
-}
+    "framework_lock": "Shawn严格"
+  }
+]
