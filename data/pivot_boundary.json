@@ -1,0 +1,40 @@
+{
+  "module": "pivot_calibrate_v1.0",
+  "generated": "2026-06-04T16:26:55.860924",
+  "formula": "MA(CLOSE,20) * (1 - 1.5 * ATR(14)/MA20)",
+  "data_source": "Sina sh000001 daily K-line",
+  "data_range": "2026-04-21 ~ 2026-06-04 (30天)",
+  "pivot": {
+    "ma20": 4133.11,
+    "atr14": 55.43,
+    "volatility": 0.0134,
+    "volatility_pct": "1.34%",
+    "atr_multiplier": 1.5,
+    "survival_boundary": 4049.97
+  },
+  "context": {
+    "current_close": 4057.78,
+    "current_date": "2026-06-04",
+    "above_boundary": true,
+    "distance_to_boundary": 7.81,
+    "distance_pct": "+0.19%"
+  },
+  "legacy_4070": {
+    "old_threshold": 4070,
+    "new_boundary": 4049.97,
+    "delta": -20.03,
+    "note": "新边界比旧4070低20点"
+  },
+  "recent_closes": [
+    4068.57,
+    4057.74,
+    4075.1,
+    4083.97,
+    4057.78
+  ],
+  "parameters": {
+    "ma_window": 20,
+    "atr_window": 14,
+    "atr_multiplier": 1.5
+  }
+}
