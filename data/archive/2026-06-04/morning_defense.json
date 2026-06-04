@@ -1,0 +1,25 @@
+{
+  "date": "2026-06-04",
+  "time": "09:34:13",
+  "severity": "🔴 重度",
+  "barometer_trigger": true,
+  "bid_up_count_estimated": 552,
+  "ma5_death_cross": true,
+  "framework_lock": "Shawn严格",
+  "action": "全天熔断 — 所有秒杀指令失效，全天禁止开仓",
+  "budget_per_position": 0,
+  "red_dimensions": 3,
+  "yellow_dimensions": 2,
+  "matrix_subtraction": {
+    "dim1": "预测1500-2200 → 实际~552 → 偏差>50%",
+    "dim2": "预测+0.1%~+0.3% → 实际-0.74% → 方向相反",
+    "dim3": "预测绿灯/黄灯 → 实际🔴红灯(竞价<1000)",
+    "dim4": "待盘中验证",
+    "dim5": "待盘中验证"
+  },
+  "triggered_rules": [
+    "气压计三熔断: 竞价上涨家数<1000",
+    "MA5死叉: 强制锁定Shawn严格框架",
+    "5维预测≥2维度失真: 全天熔断"
+  ]
+}
