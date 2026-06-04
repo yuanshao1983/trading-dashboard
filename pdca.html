@@ -234,15 +234,25 @@ function openDay(i) {
   let l2HTML = '';
   if (mp) {
     l2HTML += `<div class="collision-row"><span class="label">大盘走势预测</span><span class="value pred">${mp.market||'—'}</span></div>`;
-    l2HTML += `<div class="collision-row"><span class="label">核心板块主线</span><span class="value pred">${mp.sectors||'—'}</span></div>`;
+    l2HTML += `<div class="collision-row"><span class="label">核心板块预测</span><span class="value pred">${mp.sectors||'—'}</span></div>`;
     l2HTML += `<div class="collision-row"><span class="label">重点个股预测</span><span class="value pred">${mp.stocks||'—'}</span></div>`;
   } else {
-    l2HTML += `<div class="collision-row"><span class="label">状态</span><span class="value" style="color:var(--text3)">09:26当日预测待数据接入 — cron升级已完成，明早首次产出</span></div>`;
+    l2HTML += `<div class="collision-row"><span class="label">状态</span><span class="value" style="color:var(--text3)">09:26当日预测数据缺失</span></div>`;
   }
   if (l2v) {
     l2HTML += `<div style="margin-top:12px;padding-top:10px;border-top:1px solid var(--border);">`;
-    l2HTML += `<div class="collision-row"><span class="label">收盘真实走势</span><span class="value">${l2v.market_real||'—'}</span></div>`;
-    l2HTML += `<div class="collision-row"><span class="label">预测准确度</span><span class="value" style="font-weight:700;color:${l2v.accuracy>=70?'var(--green)':(l2v.accuracy>=40?'var(--orange)':'var(--red)')}">${l2v.accuracy||'—'}%</span></div>`;
+    const accColor = l2v.accuracy>=70?'var(--green)':(l2v.accuracy>=40?'var(--orange)':'var(--red)');
+    const vColor = l2v.verdict==='完全失效'?'var(--red)':(l2v.verdict==='偏离'?'var(--orange)':'var(--green)');
+    l2HTML += `<div class="collision-row"><span class="label">📊 收盘真实走势</span><span class="value">${l2v.market_real||'—'}</span></div>`;
+    l2HTML += `<div class="collision-row"><span class="label">📊 板块实盘表现</span><span class="value">${l2v.sector_real||'—'}</span></div>`;
+    l2HTML += `<div class="collision-row"><span class="label">📊 个股实盘表现</span><span class="value">${l2v.stock_real||'—'}</span></div>`;
+    l2HTML += `<div class="collision-row"><span class="label">🎯 L2准确度评分</span><span class="value" style="font-weight:700;font-size:15px;color:${accColor}">${l2v.accuracy||'—'}% — ${l2v.verdict||'—'}</span></div>`;
+    if (l2v.analysis) l2HTML += `<div class="collision-row"><span class="label">🔍 偏差分析</span><span class="value">${l2v.analysis}</span></div>`;
+    l2HTML += `</div>`;
+  } else {
+    l2HTML += `<div style="margin-top:12px;padding-top:10px;border-top:1px solid var(--border);">`;
+    l2HTML += `<div class="collision-row"><span class="label" style="color:var(--red)">⚠️ 审计闭环缺失</span><span class="value" style="color:var(--orange)">该日L2收盘清算未执行 — 15:30 cron未产出审计数据</span></div>`;
+    l2HTML += `</div>`;
   }
 
   const attr = day.deep_attribution||null;
