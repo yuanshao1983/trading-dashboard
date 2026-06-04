@@ -111,6 +111,15 @@
       "patch_location": "market_postmortem.py L935-940: bid_up_ratio→market_pred映射表",
       "patch_status": "✅ 06.04已修复 — 重校准为55%/35%/20%三档",
       "logic_debt": false
+    },
+    "model_confidence": {
+      "current": 0.2,
+      "l2_mean_accuracy": 20,
+      "position_limit": 0.05,
+      "dynamic_thresholds": {
+        "hound_pass_line": 1,
+        "alpha_trigger": 39
+      }
     }
   },
   {
@@ -225,6 +234,15 @@
       "patch_location": "market_postmortem.py Step5: 需新增隔夜事件扫描模块（待开发）",
       "patch_status": "⚠️ 待定修复：需人工注入补丁 — 隔夜事件扫描为新增功能模块，当前系统架构未覆盖",
       "logic_debt": true
+    },
+    "model_confidence": {
+      "current": 0.2,
+      "l2_mean_accuracy": 20,
+      "position_limit": 0.05,
+      "dynamic_thresholds": {
+        "hound_pass_line": 1,
+        "alpha_trigger": 39
+      }
     }
   },
   {
@@ -346,6 +364,15 @@
       "patch_location": "market_postmortem.py L935-940: 映射表阈值",
       "patch_status": "✅ 06.04已修复 — 20-35%→震荡偏弱，35-55%→窄幅震荡",
       "logic_debt": false
+    },
+    "model_confidence": {
+      "current": 0.2,
+      "l2_mean_accuracy": 20,
+      "position_limit": 0.05,
+      "dynamic_thresholds": {
+        "hound_pass_line": 1,
+        "alpha_trigger": 39
+      }
     }
   },
   {
@@ -479,6 +506,15 @@
       "气压计状态_偏差100%"
     ],
     "max_dev": 135.4,
-    "engine": "deviation_engine_v2.0"
+    "engine": "deviation_engine_v2.0",
+    "model_confidence": {
+      "current": 0.2,
+      "l2_mean_accuracy": 20,
+      "position_limit": 0.05,
+      "dynamic_thresholds": {
+        "hound_pass_line": 1,
+        "alpha_trigger": 39
+      }
+    }
   }
 ]
