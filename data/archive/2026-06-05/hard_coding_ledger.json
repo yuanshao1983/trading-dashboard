@@ -1,0 +1,106 @@
+{
+  "module": "hard_coding_ledger_v1.0",
+  "generated": "2026-06-04T16:35:00",
+  "summary": {
+    "total_findings": 181,
+    "fixed": 2,
+    "needs_fix": 3,
+    "configurable_acceptable": 14,
+    "false_positives": 162
+  },
+  "categories": [
+    {
+      "id": "IDX-01",
+      "name": "上证指数生命线4070",
+      "severity": "🔴 CRITICAL",
+      "status": "✅ 已动态化",
+      "old_value": "4070（硬编码）",
+      "new_dynamic": "MA(CLOSE,20) × (1 - 1.5 × ATR(14)/MA20) → pivot_boundary.json",
+      "files_fixed": ["market_postmortem.py:rate_market()", "market_postmortem.py:generate_predictions()", "market_env.py:load_key_levels()"],
+      "calibrator": "pivot_calibrate.py",
+      "cron": "76c563573caa (每周五18:00)",
+      "current_value": 4050
+    },
+    {
+      "id": "BAR-01",
+      "name": "竞价上涨家数熔断线1000",
+      "severity": "🔴 CRITICAL",
+      "status": "✅ 已动态化",
+      "old_value": "1000家（固定）",
+      "new_dynamic": "下5%分位数（89天历史分布）→ barometer_thresholds.json",
+      "files_fixed": ["market_postmortem.py:morning_verify()"],
+      "calibrator": "barometer_calibrate.py",
+      "cron": "e89b4cc5adc3 (每日16:00)",
+      "current_value": {"meltdown": 404, "hesitate": 860}
+    },
+    {
+      "id": "PRC-01",
+      "name": "华锋股份机构成本区18.50-19.50",
+      "severity": "🟠 HIGH",
+      "status": "🔧 待修复",
+      "old_value": "18.50-19.50（硬编码价格区间）",
+      "target_dynamic": "EMA(5)回踩区 + 机构龙虎榜加权成本",
+      "files_affected": ["MEMORY.md", "rs14-predator-protocol/references/backtest-20260604-dual-verification.md"],
+      "note": "价格区间应表达为相对技术位的偏离，不写死绝对数字"
+    },
+    {
+      "id": "PRC-02",
+      "name": "华锋股份止损18.00 / 目标25+",
+      "severity": "🟠 HIGH",
+      "status": "🔧 待修复",
+      "old_value": "止损18.00, 目标25+（硬编码）",
+      "target_dynamic": "止损=首板实体低点或EMA(20)；目标=前高或测量运动1:2.5",
+      "files_affected": ["MEMORY.md"],
+      "note": "止损/目标必须引用可追踪的技术位"
+    },
+    {
+      "id": "IDX-02",
+      "name": "market_env.py静态关键位",
+      "severity": "🟡 MEDIUM",
+      "status": "⚠️ 部分动态化",
+      "old_value": "4000/4068/4100/4150/4170/4200（静态数组）",
+      "target_dynamic": "生命线已动态化；其他关键位可从pivot + N×ATR推导",
+      "files_affected": ["market_env.py:KEY_LEVELS_STATIC"],
+      "note": "支撑/压力位建议用pivot ± 1.5×ATR, pivot ± 3×ATR 生成动态网格"
+    },
+    {
+      "id": "CFG-01",
+      "name": "score_model.py 筹码集中度/获利盘阈值",
+      "severity": "🟢 LOW",
+      "status": "✅ 可配置参数",
+      "values": "concentration<15%, profit>80%, runup>30%",
+      "note": "模型超参数，非市场变量。固化在代码中可接受，但建议移到配置文件。"
+    },
+    {
+      "id": "CFG-02",
+      "name": "predator_monitor.py 分时权重",
+      "severity": "🟢 LOW",
+      "status": "✅ 可配置参数",
+      "values": "5分钟80% + 竞价20%",
+      "note": "协议权重参数，通过回测验证。固化可接受。"
+    },
+    {
+      "id": "CFG-03",
+      "name": "risk_control_engine.py 移动止盈2%",
+      "severity": "🟢 LOW",
+      "status": "✅ 可配置参数",
+      "values": "trailing_stop_distance=2.0%",
+      "note": "风控参数，非市场变量。建议改为ATR倍数。"
+    },
+    {
+      "id": "CFG-04",
+      "name": "各类监控百分比阈值",
+      "severity": "🟢 LOW",
+      "status": "✅ 可配置参数",
+      "values": "涨幅±5%告警, 上证10分钟跌>0.9%系统性, 上证日跌>2.5%极端",
+      "note": "监控阈值，非策略参数。固化可接受。"
+    }
+  ],
+  "false_positives_breakdown": {
+    "999_哨兵值": "dist_ma20/dist_ma60/surge_days等null安全值",
+    "688_920_前缀过滤": "科创板/北交所交易所代码，非市场变量",
+    "地理坐标": "maps skill，非交易相关",
+    "日期时间格式": "09:25/09:26等交易时间锚点",
+    "API配置": "timeout/sleep/pagesize等技术参数"
+  }
+}
