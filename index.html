@@ -55,6 +55,16 @@
   .exec-card .num{font-size:24px;font-weight:700}
   .exec-card .lbl{font-size:10px;color:#888;margin-top:2px}
   .exec-reason{font-size:12px;color:#999;padding:8px 12px;background:#16162a;border-radius:6px;margin-top:8px}
+
+  /* Market Breadth */
+  .breadth-row{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:12px}
+  .breadth-kpi{background:#16162a;border-radius:6px;padding:10px 14px;text-align:center;flex:1;min-width:80px}
+  .breadth-kpi .val{font-size:20px;font-weight:700}
+  .breadth-kpi .lbl{font-size:10px;color:#888;margin-top:2px}
+  .breadth-bar{height:6px;border-radius:3px;margin:8px 0;background:#2a2a3e;overflow:hidden}
+  .breadth-bar-fill{height:100%;border-radius:3px;transition:width 0.5s}
+  .breadth-sub{display:flex;gap:10px;flex-wrap:wrap;font-size:11px;color:#888}
+  .breadth-sub span{padding:2px 6px;background:#16162a;border-radius:4px}
 </style>
 </head>
 <body>
@@ -68,6 +78,12 @@
   <div class="kpi-card"><div class="label">可用现金</div><div class="value" id="kp_cash">-</div></div>
   <div class="kpi-card"><div class="label">累计盈亏</div><div class="value" id="kp_pnl">-</div><div class="subv" id="kp_pnlpct"></div></div>
   <div class="kpi-card"><div class="label">交易统计</div><div class="value" id="kp_trades">-</div><div class="subv" id="kp_winrate"></div></div>
+</div>
+
+<!-- ═══ MARKET BREADTH ═══ -->
+<div class="section">
+  <h2>🌐 全市场广度 <span style="font-size:11px;color:#666;font-weight:400" id="mb_source"></span></h2>
+  <div id="mb_body"></div>
 </div>
 
 <!-- ═══ POSITIONS ═══ -->
@@ -115,6 +131,72 @@ function fmt(n,d){if(typeof n!=='number'||isNaN(n))return'-';return n.toFixed(d|
 function pct(n){if(typeof n!=='number'||isNaN(n))return'-';return(n>=0?'+':'')+n.toFixed(2)+'%'}
 function updown(v){if(typeof v!=='number'||isNaN(v))return'';return v>=0?'up':'down'}
 function pnlClass(v){if(typeof v!=='number'||isNaN(v))return'';return v>=0?'profit':'loss'}
+
+function buildMarketBreadth(d){
+  var mb=d.market_breadth||{};
+  if(!mb.available){
+    el('mb_source').innerText='⚠ '+(mb.reason||'数据不可用');
+    el('mb_body').innerHTML='<div class="empty-state">全市场数据未生成 — 等待 update.sh 执行 all_market_breadth.py</div>';
+    return;
+  }
+  el('mb_source').innerText=mb.total+'只 | 来源:'+mb.data_source+' | '+mb.generated_at;
+  var html='';
+
+  // KPI row
+  var upClr=mb.up_pct>50?'#ef4444':(mb.up_pct>25?'#eab308':'#22c55e');
+  var dnClr=mb.down_pct>50?'#22c55e':(mb.down_pct>25?'#eab308':'#ef4444');
+  html+='<div class="breadth-row">'+
+    '<div class="breadth-kpi"><div class="val" style="color:#3b82f6">'+mb.total+'</div><div class="lbl">总样本</div></div>'+
+    '<div class="breadth-kpi"><div class="val" style="color:'+upClr+'">'+mb.up_count+' ('+mb.up_pct+'%)</div><div class="lbl">上涨</div></div>'+
+    '<div class="breadth-kpi"><div class="val" style="color:'+dnClr+'">'+mb.down_count+' ('+mb.down_pct+'%)</div><div class="lbl">下跌</div></div>'+
+    '<div class="breadth-kpi"><div class="val" style="color:#888">'+fmt(mb.median_pct_chg,2)+'%</div><div class="lbl">中位数涨跌</div></div>'+
+    '<div class="breadth-kpi"><div class="val" style="color:#ef4444">'+mb.limit_up_count+'</div><div class="lbl">涨停</div></div>'+
+    '<div class="breadth-kpi"><div class="val" style="color:#22c55e">'+mb.limit_down_count+'</div><div class="lbl">跌停</div></div>'+
+    '</div>';
+
+  // Distribution bar
+  var dist=mb.distribution||{};
+  var total=mb.total||1;
+  var bins=['<=-5%','-5%~-2%','-2%~0%','0%~2%','2%~5%','>5%'];
+  var colors=['#dc2626','#ef4444','#6b7280','#22c55e','#16a34a','#059669'];
+  html+='<div class="breadth-bar">';
+  for(var i=0;i<bins.length;i++){
+    var w=(dist[bins[i]]||0)/total*100;
+    if(w>0) html+='<div class="breadth-bar-fill" style="display:inline-block;width:'+w+'%;background:'+colors[i]+'" title="'+bins[i]+':'+w.toFixed(1)+'%"></div>';
+  }
+  html+='</div>';
+
+  // Distribution labels
+  html+='<div class="breadth-sub">';
+  for(var i=0;i<bins.length;i++){
+    html+='<span style="color:'+colors[i]+'">'+bins[i]+': '+(dist[bins[i]]||0)+'只</span>';
+  }
+  html+='</div>';
+
+  // Top movers
+  var gainers=mb.top_gainers||[],losers=mb.top_losers||[],amt=mb.top_amount||[];
+  if(gainers.length){
+    html+='<div style="margin-top:12px;display:flex;gap:20px;flex-wrap:wrap">';
+    html+='<div style="flex:1;min-width:200px"><h3 style="color:#ef4444;margin:0 0 6px">🔥 涨幅TOP5</h3>';
+    for(var i=0;i<gainers.length;i++){var g=gainers[i];
+      html+='<div style="font-size:12px;padding:2px 0">'+g.code+' <span style="color:#aaa">'+g.name+'</span> <span style="color:#ef4444">+'+g.pct_chg+'%</span></div>';}
+    html+='</div>';
+    html+='<div style="flex:1;min-width:200px"><h3 style="color:#22c55e;margin:0 0 6px">❄️ 跌幅TOP5</h3>';
+    for(var i=0;i<losers.length;i++){var l=losers[i];
+      html+='<div style="font-size:12px;padding:2px 0">'+l.code+' <span style="color:#aaa">'+l.name+'</span> <span style="color:#22c55e">'+l.pct_chg+'%</span></div>';}
+    html+='</div>';
+    html+='</div>';
+  }
+
+  // Volume TOP5
+  if(amt.length){
+    html+='<h3 style="margin:12px 0 8px">💰 成交额TOP5（亿）</h3>';
+    for(var i=0;i<amt.length;i++){var a=amt[i];
+      html+='<span style="font-size:12px;padding:2px 8px;margin:2px;background:#16162a;border-radius:4px;display:inline-block">'+a.code+' '+a.name+' <strong>'+a.amount+'亿</strong></span>';}
+  }
+
+  el('mb_body').innerHTML=html;
+}
 
 function buildPositions(d){
   var pos=d.positions||[],acct=d.account||{},html='';
@@ -223,7 +305,7 @@ function update(){
     el('kp_pnlpct').className='subv '+pnlClass(a.total_pnl_pct);
     el('kp_trades').innerText=(a.trade_count||0)+'笔';
     el('kp_winrate').innerText='胜率 '+((a.win_rate||0)*100).toFixed(0)+'% ('+a.win_count+'胜)';
-    buildPositions(d);buildExecution(d);buildHistory(d);buildCollision(d);buildHealth(d);buildMacro(d);buildEvolution(d)
+    buildPositions(d);buildMarketBreadth(d);buildExecution(d);buildHistory(d);buildCollision(d);buildHealth(d);buildMacro(d);buildEvolution(d)
   };
   x.onerror=function(){el('ts').innerText='连接失败,重试...'};x.send()
 }
