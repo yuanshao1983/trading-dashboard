@@ -563,7 +563,98 @@
     "idx_chg_pct": -0.2,
     "warnings": [],
     "note": "手动回退流程 — cron时间窗口过期",
-    "barometer_status": "ACTIVE"
+    "barometer_status": "ACTIVE",
+    "dim1": "竞价上涨家数",
+    "dim1_pred": "1500-2200",
+    "dim1_real": "1284",
+    "dim1_dev": 31.4,
+    "dim1_sev": "🔴",
+    "dim2": "大盘多空开盘",
+    "dim2_pred": "平开或小幅高开 +0.1%~+0.3%",
+    "dim2_real": "上证低开4044(-0.32%),创业板低开4080(-0.22%)",
+    "dim2_dev": 0,
+    "dim2_sev": "🔴",
+    "dim3": "气压计状态",
+    "dim3_pred": "绿灯或黄灯",
+    "dim3_real": "🟡黄灯 — 竞价1284,勉强>1000但弱势",
+    "dim3_dev": 0,
+    "dim3_sev": "🟡",
+    "dim4": "全场涨停数",
+    "dim4_pred": "60-85只",
+    "dim4_real": "73",
+    "dim4_dev": 0,
+    "dim4_sev": "🟢",
+    "dim5": "L4次日期望",
+    "dim5_pred": "计提率≥50%,均涨幅+1~3%",
+    "dim5_real": "昨日L4空池,无可验证",
+    "dim5_dev": 0,
+    "dim5_sev": "🟡",
+    "deviations": [
+      {
+        "name": "竞价上涨家数",
+        "pred": "1500-2200",
+        "real": "1284",
+        "dev": 31.4,
+        "severity": "🔴",
+        "formula": "market_evolution_memory.dim1_bid_up_count"
+      },
+      {
+        "name": "大盘多空开盘",
+        "pred": "平开或小幅高开 +0.1%~+0.3%",
+        "real": "上证低开4044(-0.32%),创业板低开4080(-0.22%)",
+        "dev": 0,
+        "severity": "🔴",
+        "formula": "market_evolution_memory.dim2_open_direction"
+      },
+      {
+        "name": "气压计状态",
+        "pred": "绿灯或黄灯",
+        "real": "🟡黄灯 — 竞价1284,勉强>1000但弱势",
+        "dev": 0,
+        "severity": "🟡",
+        "formula": "market_evolution_memory.dim3_barometer"
+      },
+      {
+        "name": "全场涨停数",
+        "pred": "60-85只",
+        "real": "73",
+        "dev": 0,
+        "severity": "🟢",
+        "formula": "market_evolution_memory.dim4_zt_count"
+      },
+      {
+        "name": "L4次日期望",
+        "pred": "计提率≥50%,均涨幅+1~3%",
+        "real": "昨日L4空池,无可验证",
+        "dev": 0,
+        "severity": "🟡",
+        "formula": "market_evolution_memory.dim5_l4_expectation"
+      }
+    ],
+    "morning_prediction": {
+      "market": "1500-2200 | 平开或小幅高开 +0.1%~+0.3%",
+      "sectors": "待板块实盘数据确认",
+      "stocks": "空仓状态",
+      "logic": "竞价上涨1062只，上证低开-0.32%，气压计黄灯",
+      "timestamp": "2026-06-05T09:37:00"
+    },
+    "l2_verification": {
+      "market_real": "上证收盘4027.74，-0.42%（开4045→收4028，低开低走）。73只涨停，创业板-3.2%。竞价上涨1062只勉强>1000未熔断，但全天弱势。",
+      "sector_real": "领跌：创业板权重。防御板块（银行/公用事业）相对抗跌。",
+      "stock_real": "空仓，无持仓验证。",
+      "accuracy": 40,
+      "timestamp": "2026-06-05T15:30:00"
+    },
+    "deep_attribution": {
+      "right": "dim4涨停数预测命中(73∈[60,85])；dim3气压计方向正确(未熔断)",
+      "wrong": "dim1竞价上涨家数预测过于乐观(1500-2200 vs 1062)；dim2开盘方向完全相反(预测高开实际低开)",
+      "root_cause": "预测未纳入隔夜外盘走弱信号（美股前一交易日下跌、日经低开），以及MA5死叉的技术惯性。",
+      "fix": "dim1_mapping: 接入昨日外盘收盘+今早日经/韩国开盘数据作为预测修正因子",
+      "patch": "morning_prediction.dim1: 外盘因子权重30%，dim2: 加入亚太早盘方向确认"
+    },
+    "severe_count": 2,
+    "max_dev": 31.4,
+    "verdict": "🔴 重度偏离 — 单仓预算锁死至1.0万（2维超30%阈值）"
   },
   {
     "date": "2026-06-08",
