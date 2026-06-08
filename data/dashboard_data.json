@@ -1,0 +1,12 @@
+{
+  "account": {
+    "total_assets": 187514.71,
+    "total_pnl": -12485.29,
+    "daily_snapshot": "2026-06-08"
+  },
+  "review": {
+    "prediction": "--",
+    "actual": "--",
+    "solution": "--"
+  }
+}
