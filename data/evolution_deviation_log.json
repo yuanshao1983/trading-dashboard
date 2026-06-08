@@ -11,7 +11,8 @@
     "idx_open_chg": -0.32,
     "idx_chg_pct": -0.2,
     "warnings": [],
-    "note": "手动回退流程 — cron时间窗口过期"
+    "note": "手动回退流程 — cron时间窗口过期",
+    "barometer_status": "ACTIVE"
   },
   {
     "date": "2026-06-08",
@@ -97,6 +98,36 @@
         "dev": 0,
         "severity": "⏳待验证"
       }
-    ]
+    ],
+    "idx_open_chg": -2.21,
+    "dim1": "竞价上涨家数",
+    "dim1_pred": "1500-2200",
+    "dim1_real": "191",
+    "dim1_dev": 187.0,
+    "dim1_sev": "🔴🔴",
+    "dim2": "大盘多空开盘",
+    "dim2_pred": "平开",
+    "dim2_real": "低开",
+    "dim2_dev": 30.0,
+    "dim2_sev": "🟡",
+    "dim3": "气压计状态",
+    "dim3_pred": "绿灯或黄灯",
+    "dim3_real": "双红灯或橙+红",
+    "dim3_dev": 100.0,
+    "dim3_sev": "🔴",
+    "dim4": "全场涨停数",
+    "dim4_pred": "60-85",
+    "dim4_real": "0",
+    "dim4_dev": 240.0,
+    "dim4_sev": "🔴🔴",
+    "dim5": "L4次日期望",
+    "dim5_pred": "计提率≥50%,均涨幅+1~3%",
+    "dim5_real": "待L2对撞",
+    "dim5_dev": 0,
+    "dim5_sev": "⏳待验证",
+    "barometer_status": "MELTDOWN",
+    "action": "🔴🔴 系统性重度失真 — 无条件熔断全天交易（最大偏差240%）",
+    "severity": "🔴🔴",
+    "framework_lock": "Shawn严格"
   }
 ]
