@@ -5,14 +5,14 @@ set -e
 DASHBOARD_DIR="$HOME/trading-dashboard"
 HERMES_DIR="$HOME/.hermes"
 
-# Step 1: 同步数据
+# Step 1: DNA账本固化（评分→交易记录→权重修正→持仓DNA）
+echo "🧬 DNA账本固化..."
+HERMES_VENV="$HERMES_DIR/hermes-agent/venv/bin/python3"
+$HERMES_VENV "$HERMES_DIR/scripts/dna_ledger.py" all 2>&1
+
+# Step 2: 同步数据（仅DNA核心数据）
 cp "$HERMES_DIR/paper_account.json" "$DASHBOARD_DIR/data/"
-cp "$HERMES_DIR/cache/market_evolution_memory.json" "$DASHBOARD_DIR/data/"
-cp "$HERMES_DIR/cache/evolution_deviation_log.json" "$DASHBOARD_DIR/data/" 2>/dev/null || true
-cp "$HERMES_DIR/cache/morning_defense.json" "$DASHBOARD_DIR/data/" 2>/dev/null || true
 cp "$HERMES_DIR/data/trades.json" "$DASHBOARD_DIR/data/" 2>/dev/null || true
-cp "$HERMES_DIR/cache/barometer_thresholds.json" "$DASHBOARD_DIR/data/" 2>/dev/null || true
-cp "$HERMES_DIR/cache/pivot_boundary.json" "$DASHBOARD_DIR/data/" 2>/dev/null || true
 
 # Step 2: 归档
 ARCHIVE_DIR="$DASHBOARD_DIR/data/archive/$(date +%Y-%m-%d)"

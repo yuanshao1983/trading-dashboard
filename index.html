@@ -3,320 +3,221 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>剃刀 · 交易仪表盘</title>
+<title>剃刀 · 持仓仪表盘</title>
 <style>
-  *, *::before, *::after { margin:0; padding:0; box-sizing:border-box }
+  :root {
+    --bg:#0a0a0c; --card:rgba(22,22,26,0.88); --card2:rgba(28,28,34,0.92);
+    --text:#e8e8ed; --text2:#98989e; --text3:#5c5c63;
+    --accent:#0af; --green:#00e676; --red:#ff3d3d; --orange:#ff9100;
+    --border:rgba(255,255,255,0.06); --radius:16px; --radius-sm:10px;
+  }
+  * { margin:0; padding:0; box-sizing:border-box; }
   body {
-    font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', system-ui, sans-serif;
-    background: #f5f5f7;
-    color: #1d1d1f;
-    line-height: 1.47;
-    letter-spacing: -0.022em;
-    padding: 40px 20px;
+    background:var(--bg); color:var(--text);
+    font-family:-apple-system,BlinkMacSystemFont,'SF Pro Display','Segoe UI',Roboto,sans-serif;
+    padding:24px; min-height:100vh; -webkit-font-smoothing:antialiased; letter-spacing:-0.01em; line-height:1.55;
   }
-  .container { max-width: 1024px; margin: 0 auto }
-  .header {
-    text-align: center;
-    padding: 40px 0 48px;
+  .navbar {
+    position:sticky; top:0; z-index:100;
+    backdrop-filter:blur(28px); background:rgba(10,10,12,0.78);
+    border-bottom:1px solid var(--border);
+    padding:14px 24px; margin:-24px -24px 24px;
+    display:flex; justify-content:space-between; align-items:center;
   }
-  .header h1 {
-    font-size: 48px;
-    font-weight: 700;
-    letter-spacing: -0.04em;
-    color: #1d1d1f;
+  .navbar h1 { font-size:19px; font-weight:700; letter-spacing:-0.03em; }
+  .navbar h1 span { background:linear-gradient(135deg,#e8e8ed 0%,#0af 100%); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; }
+  .nav-links a { font-size:12px; color:var(--accent); text-decoration:none; font-weight:600; }
+  .container { max-width:960px; margin:0 auto; }
+  
+  /* Stat cards */
+  .stat-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:12px; margin-bottom:20px; }
+  .stat-card {
+    background:var(--card); border:1px solid var(--border); border-radius:var(--radius);
+    padding:16px 20px; text-align:center;
   }
-  .header .sub {
-    font-size: 17px;
-    color: #86868b;
-    margin-top: 8px;
-  }
-  .cards {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-    gap: 16px;
-    margin-bottom: 40px;
-  }
-  .card {
-    background: #fff;
-    border-radius: 18px;
-    padding: 20px 24px;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.04);
-  }
-  .card .label {
-    font-size: 12px;
-    font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 0.08em;
-    color: #86868b;
-    margin-bottom: 8px;
-  }
-  .card .value {
-    font-size: 32px;
-    font-weight: 700;
-    letter-spacing: -0.03em;
-  }
-  .card .unit {
-    font-size: 16px;
-    font-weight: 500;
-    color: #86868b;
-  }
-  .red { color: #ff3b30 }
-  .green { color: #34c759 }
-  .neutral { color: #1d1d1f }
+  .stat-card .label { font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:0.08em; color:var(--text3); margin-bottom:4px; }
+  .stat-card .value { font-size:28px; font-weight:700; letter-spacing:-0.03em; }
+  .stat-card .sub { font-size:11px; color:var(--text2); margin-top:2px; }
+  .green { color:var(--green); } .red { color:var(--red); }
+  
+  /* Section */
   .section {
-    background: #fff;
-    border-radius: 18px;
-    padding: 28px 28px 20px;
-    margin-bottom: 20px;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+    background:var(--card); border:1px solid var(--border); border-radius:var(--radius);
+    padding:22px 26px; margin-bottom:16px;
   }
-  .section h2 {
-    font-size: 21px;
-    font-weight: 700;
-    margin-bottom: 16px;
-    letter-spacing: -0.022em;
+  .section h2 { font-size:16px; font-weight:700; margin-bottom:16px; letter-spacing:-0.02em; display:flex; align-items:center; gap:8px; }
+  .section h2 .badge { font-size:11px; font-weight:600; padding:3px 10px; border-radius:20px; }
+  .badge-danger { background:rgba(255,61,61,0.15); color:var(--red); }
+  .badge-ok { background:rgba(0,230,118,0.15); color:var(--green); }
+  
+  /* Holdings table */
+  table { width:100%; border-collapse:collapse; font-size:13px; }
+  th { text-align:left; font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:0.06em; color:var(--text3); padding:8px 10px; border-bottom:1px solid var(--border); }
+  td { padding:12px 10px; border-bottom:1px solid rgba(255,255,255,0.03); font-variant-numeric:tabular-nums; }
+  tr:last-child td { border-bottom:none; }
+  tr.danger { background:rgba(255,61,61,0.06); }
+  tr.danger td:first-child { border-left:2px solid var(--red); padding-left:8px; }
+  
+  .dna-score { font-weight:700; font-size:15px; }
+  .dna-danger { color:var(--red); }
+  .dna-warn { color:var(--orange); }
+  .dna-ok { color:var(--green); }
+  
+  .dim-badge {
+    display:inline-block; padding:2px 6px; border-radius:6px; font-size:10px; font-weight:600;
+    background:rgba(255,145,0,0.12); color:var(--orange); margin-left:4px;
   }
-  table {
-    width: 100%;
-    border-collapse: collapse;
-    font-size: 15px;
-  }
-  th {
-    text-align: left;
-    font-size: 12px;
-    font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 0.08em;
-    color: #86868b;
-    padding: 8px 12px;
-    border-bottom: 1px solid #e5e5ea;
-  }
-  td {
-    padding: 10px 12px;
-    border-bottom: 1px solid #f5f5f7;
-    font-variant-numeric: tabular-nums;
-  }
-  tr:last-child td { border-bottom: none }
-  .pnl-pos { color: #ff3b30; font-weight: 600 }
-  .pnl-neg { color: #34c759; font-weight: 600 }
-  .badge {
-    display: inline-block;
-    padding: 2px 8px;
-    border-radius: 20px;
-    font-size: 11px;
-    font-weight: 600;
-    letter-spacing: 0.02em;
-  }
-  .badge-red { background: #ffe5e5; color: #ff3b30 }
-  .badge-green { background: #e5ffe5; color: #34c759 }
-  .badge-gray { background: #f5f5f7; color: #86868b }
-  .lessons {
-    list-style: none;
-    counter-reset: lesson;
-  }
-  .lessons li {
-    counter-increment: lesson;
-    padding: 8px 0;
-    border-bottom: 1px solid #f5f5f7;
-    display: flex;
-    align-items: flex-start;
-    gap: 12px;
-    font-size: 15px;
-  }
-  .lessons li::before {
-    content: "0" counter(lesson);
-    font-size: 12px;
-    font-weight: 700;
-    color: #ff3b30;
-    white-space: nowrap;
-    padding-top: 2px;
-  }
-  .lessons li:last-child { border-bottom: none }
-  .footer {
-    text-align: center;
-    padding: 32px 0;
-    font-size: 13px;
-    color: #86868b;
-  }
-  .footer .update {
-    font-weight: 600;
-    color: #1d1d1f;
-  }
-  .pdca {
-    font-size: 14px;
-    color: #515154;
-    margin-top: 12px;
-    padding: 12px 16px;
-    background: #f5f5f7;
-    border-radius: 12px;
-  }
-  .pdca strong { color: #1d1d1f }
-  /* Dynamic threshold cards */
-  .threshold-cards {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-    gap: 12px;
-    margin-bottom: 24px;
-  }
-  .th-card {
-    background: #fff;
-    border-radius: 14px;
-    padding: 16px 20px;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.04);
-  }
-  .th-card .th-label {
-    font-size: 10px;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 0.08em;
-    margin-bottom: 4px;
-  }
-  .th-card .th-value {
-    font-size: 28px;
-    font-weight: 700;
-    letter-spacing: -0.03em;
-  }
-  .th-card .th-sub {
-    font-size: 11px;
-    color: #86868b;
-    margin-top: 2px;
-  }
+  
+  .empty-state { text-align:center; padding:40px; color:var(--text3); }
+  .empty-state .emoji { font-size:40px; margin-bottom:12px; }
+  
+  /* Footer */
+  .footer { text-align:center; padding:24px; font-size:11px; color:var(--text3); }
+  .footer a { color:var(--accent); text-decoration:none; }
 </style>
 </head>
 <body>
+
+<div class="navbar">
+  <h1>🛡️ <span>剃刀 · 持仓仪表盘</span></h1>
+  <div class="nav-links">
+    <a href="pdca.html">DNA 防守复盘 →</a>
+  </div>
+</div>
+
 <div class="container">
 
-  <div class="header">
-    <h1>剃刀 · 交易仪表盘</h1>
-    <p class="sub">JARVIS × 张麻子 · 模拟盘 v4 · 每日15:30自动更新 · <a href="pdca.html" style="color:#0071e3;text-decoration:none;font-weight:600">复盘中心 →</a></p>
+  <!-- Account Stats -->
+  <div class="stat-grid" id="stats"></div>
+
+  <!-- ═══ 持仓清单 (核心) ═══ -->
+  <div class="section">
+    <h2>
+      📊 当前持仓
+      <span class="badge" id="holding-badge"></span>
+    </h2>
+    <table>
+      <thead>
+        <tr>
+          <th>标的</th>
+          <th>持仓</th>
+          <th>入场价</th>
+          <th>现价</th>
+          <th>盈亏</th>
+          <th>DNA 评分</th>
+          <th>最弱维度</th>
+        </tr>
+      </thead>
+      <tbody id="holdings-body">
+        <tr><td colspan="7" class="empty-state"><div class="emoji">📭</div>空仓 — 等待入场信号</td></tr>
+      </tbody>
+    </table>
   </div>
 
-  <!-- Account Cards -->
-  <div class="cards" id="cards"></div>
-
-  <!-- Dynamic Thresholds -->
-  <div class="threshold-cards" id="thresholds"></div>
-
-  <!-- Trades -->
+  <!-- Trade History -->
   <div class="section">
     <h2>📋 交易记录</h2>
     <table>
       <thead>
         <tr>
-          <th>标的</th>
           <th>日期</th>
+          <th>标的</th>
           <th>策略</th>
-          <th>买入价</th>
-          <th>卖出价</th>
+          <th>入场DNA</th>
+          <th>离场DNA</th>
           <th>盈亏</th>
-          <th>退出原因</th>
+          <th>负面事件</th>
         </tr>
       </thead>
-      <tbody id="trades"></tbody>
+      <tbody id="trades-body">
+        <tr><td colspan="7" class="empty-state">加载中…</td></tr>
+      </tbody>
     </table>
   </div>
 
-  <!-- Summary -->
-  <div class="section">
-    <h2>⚡ 策略审计</h2>
-    <ul class="lessons" id="lessons"></ul>
-    <div class="pdca" id="pdca"></div>
-  </div>
-
   <div class="footer">
-    <p><span class="update" id="updated"></span> · yuanshao1983/trading-dashboard</p>
-    <p style="margin-top:4px">JARVIS 自主决策 · 盈亏自负 · 数据机器生成</p>
+    <p>JARVIS 自主决策 · DNA 防守协议 v1 · 每日15:30自动更新 · <a href="pdca.html">DNA复盘中心</a></p>
+    <p style="margin-top:4px" id="update-time"></p>
   </div>
 
 </div>
 
 <script>
-async function loadJSON(path) {
-  let r = await fetch('data/'+path+'?'+Date.now());
-  if (r.ok) return r.json();
-  r = await fetch('https://raw.githubusercontent.com/yuanshao1983/trading-dashboard/main/data/'+path);
-  if (r.ok) return r.json();
-  return null;
-}
+(async () => {
+  // Load data
+  let holdings = null, trades = null;
+  try {
+    let r = await fetch('data/holdings_dna.json?' + Date.now());
+    if (r.ok) holdings = await r.json();
+  } catch(e) {}
+  try {
+    let r = await fetch('data/trades.json?' + Date.now());
+    if (!r.ok) r = await fetch('https://raw.githubusercontent.com/yuanshao1983/trading-dashboard/main/data/trades.json');
+    if (r.ok) trades = await r.json();
+  } catch(e) {}
 
-Promise.all([
-  fetch('data/trades.json').then(r=>r.json()),
-  loadJSON('barometer_thresholds.json'),
-  loadJSON('pivot_boundary.json'),
-]).then(([d, baro, piv]) => {
-    // Account Cards
-    const a = d.account;
-    const cards = [
-      {label:'当前净值', value:'¥' + a.current_value.toLocaleString(), cls:'neutral'},
-      {label:'累计盈亏', value:'¥' + a.total_pnl.toLocaleString(), cls: a.total_pnl < 0 ? 'green' : 'red'},
-      {label:'盈亏比例', value:(a.total_pnl_pct * 100).toFixed(2), unit:'%', cls: a.total_pnl_pct < 0 ? 'green' : 'red'},
-      {label:'胜率', value:'14%', unit:'(1/7)', cls:'neutral'},
-      {label:'手续费', value:'¥' + a.total_fees.toFixed(2), cls:'neutral'},
-    ];
-    document.getElementById('cards').innerHTML = cards.map(c => 
-      `<div class="card"><div class="label">${c.label}</div><div class="value ${c.cls}">${c.value}<span class="unit">${c.unit||''}</span></div></div>`
-    ).join('');
+  // ═══ Account Stats ═══
+  const acc = trades?.account || {};
+  const stats = [
+    {label:'当前净值', value:'¥' + (acc.current_value || 0).toLocaleString(), cls:''},
+    {label:'累计盈亏', value:'¥' + (acc.total_pnl || 0).toLocaleString(), cls: (acc.total_pnl||0) >= 0 ? 'green' : 'red'},
+    {label:'胜率', value:(acc.win_rate || 0) + '%', cls:'', sub: acc.win_count + '/' + acc.trade_count},
+  ];
+  document.getElementById('stats').innerHTML = stats.map(s =>
+    `<div class="stat-card"><div class="label">${s.label}</div><div class="value ${s.cls}">${s.value}</div>${s.sub ? `<div class="sub">${s.sub}</div>` : ''}</div>`
+  ).join('');
 
-    // Dynamic Threshold Cards
-    let thHTML = '';
-    if (baro && piv) {
-      const melt = baro.thresholds.meltdown_line;
-      const hesi = baro.thresholds.hesitate_upper;
-      const pv = Math.round(piv.pivot.survival_boundary);
-      const ma = Math.round(piv.pivot.ma20);
-      const above = piv.context.above_boundary;
-      thHTML = `
-        <div class="th-card">
-          <div class="th-label" style="color:#ff3b30">🔴 气压计熔断</div>
-          <div class="th-value" style="color:#ff3b30">${melt}家</div>
-          <div class="th-sub">下5%分位 · ${baro.stats.n_days}天样本</div>
-        </div>
-        <div class="th-card">
-          <div class="th-label" style="color:#ff9100">🟡 犹豫区上限</div>
-          <div class="th-value" style="color:#ff9100">${hesi}家</div>
-          <div class="th-sub">下15%分位</div>
-        </div>
-        <div class="th-card">
-          <div class="th-label" style="color:#0071e3">🎯 动态生存边界</div>
-          <div class="th-value" style="color:#0071e3">${pv}</div>
-          <div class="th-sub">MA20=${ma} · ${above ? '🟢 上方' : '🔴 跌破'} ${piv.context.distance_pct}</div>
-        </div>
-        <div class="th-card">
-          <div class="th-label" style="color:#86868b">📐 偏差引擎</div>
-          <div class="th-value" style="font-size:20px;color:#1d1d1f">Type A/B/C</div>
-          <div class="th-sub">区间归零 · 方向近失 · 公式溯源</div>
-        </div>
-      `;
-    }
-    document.getElementById('thresholds').innerHTML = thHTML;
+  // ═══ Holdings ═══
+  if (holdings?.holdings?.length > 0) {
+    const h = holdings.holdings;
+    const below80 = h.filter(x => x.dna_below_80);
+    document.getElementById('holding-badge').textContent = below80.length > 0
+      ? `🚨 ${below80.length}只 < 80分`
+      : `${h.length}只 ✅`;
+    document.getElementById('holding-badge').className = 'badge ' + (below80.length > 0 ? 'badge-danger' : 'badge-ok');
 
-    // Trades
-    document.getElementById('trades').innerHTML = d.trades.map(t => {
-      const pnl = t.pnl != null ? t.pnl : (t.note ? t.note : '—');
-      const pnlCls = t.pnl > 0 ? 'pnl-pos' : (t.pnl < 0 ? 'pnl-neg' : '');
-      const badge = t.tag === '🔴' ? 'badge-red' : 'badge-green';
-      return `<tr>
-        <td>${t.tag||''} <strong>${t.name}</strong> <span style="color:#86868b">${t.code}</span></td>
-        <td>${t.buy_date} → ${t.sell_date} <span class="badge ${badge}">${t.holding_days}天</span></td>
-        <td>${t.strategy}</td>
-        <td>¥${t.buy_price}</td>
-        <td>${t.sell_price ? '¥'+t.sell_price : '—'}</td>
-        <td class="${pnlCls}">${typeof pnl === 'number' ? '¥'+pnl.toLocaleString() : pnl}</td>
-        <td style="font-size:13px;color:#86868b;max-width:220px">${t.exit_reason}</td>
+    document.getElementById('holdings-body').innerHTML = h.map(pos => {
+      const danger = pos.dna_below_80;
+      const dnaCls = pos.dna_total >= 91 ? 'dna-ok' : (pos.dna_total >= 80 ? 'dna-warn' : 'dna-danger');
+      const pnlCls = (pos.pnl_pct || 0) >= 0 ? 'green' : 'red';
+      const worst = pos.worst_dimension;
+      
+      return `<tr class="${danger ? 'danger' : ''}">
+        <td><strong>${pos.name}</strong> <span style="color:var(--text3)">${pos.code}</span></td>
+        <td>${pos.shares}股<br><span style="font-size:11px;color:var(--text2)">¥${(pos.market_value||0).toLocaleString()}</span></td>
+        <td>¥${pos.entry_price}</td>
+        <td>¥${pos.current_price}</td>
+        <td class="${pnlCls}" style="font-weight:600">${(pos.pnl_pct||0) >= 0 ? '+' : ''}${(pos.pnl_pct||0).toFixed(1)}%</td>
+        <td><span class="dna-score ${dnaCls}">${pos.dna_total != null ? pos.dna_total : '—'}</span>${pos.dna_total != null ? '<span style="font-size:10px;color:var(--text3)">/115</span>' : ''}</td>
+        <td>${worst ? `<span class="dim-badge">${worst.name} ${worst.score}/${worst.weight}</span>` : '—'}</td>
       </tr>`;
     }).join('');
+  } else {
+    document.getElementById('holding-badge').textContent = '空仓';
+    document.getElementById('holding-badge').className = 'badge badge-ok';
+  }
 
-    document.getElementById('lessons').innerHTML = d.lessons.map(l => `<li>${l}</li>`).join('');
-    document.getElementById('pdca').innerHTML = `
-      <strong>📐 PDCA闭环：</strong>7笔交易，6笔亏损，1笔盈利(¥520)。
-      核心病因：<strong>数字硬止损</strong>触发4次，全部卖在日内低点。
-      <strong>P</strong> → 废除-3%/-5%/-8%，技术位止损+VWAP分级。
-      <strong>D</strong> → 硬止损残留已清除；偏差引擎v2.0已部署。
-      <strong>C</strong> → 气压计/中枢/偏差全部动态化，公式可溯源。
-      <strong>A</strong> → 硬编码清单推至Dashboard，sentry门禁就绪。
-    `;
-    document.getElementById('updated').textContent = '更新: ' + d.updated;
-  });
+  // ═══ Trade History ═══
+  if (trades?.trades?.length > 0) {
+    document.getElementById('trades-body').innerHTML = trades.trades.slice().reverse().map(t => {
+      const pnlCls = (t.pnl || 0) >= 0 ? 'green' : 'red';
+      const entryDna = t.dna_entry != null ? t.dna_entry : '—';
+      const exitDna = t.dna_exit != null ? t.dna_exit : '—';
+      const event = t.negative_event || t.exit_reason || '—';
+      return `<tr>
+        <td>${t.buy_date || '—'}<br><span style="font-size:10px;color:var(--text3)">→ ${t.sell_date || '持仓中'}</span></td>
+        <td><strong>${t.name}</strong> <span style="color:var(--text3)">${t.code}</span></td>
+        <td>${t.strategy || '—'}</td>
+        <td>${entryDna}</td>
+        <td>${exitDna}</td>
+        <td class="${pnlCls}" style="font-weight:600">¥${(t.pnl||0).toLocaleString()}</td>
+        <td style="font-size:12px;color:var(--text2);max-width:200px">${event}</td>
+      </tr>`;
+    }).join('');
+  }
+
+  document.getElementById('update-time').textContent = '更新: ' + (trades?.updated || holdings?.timestamp || '—');
+})();
 </script>
 </body>
 </html>

@@ -3,14 +3,13 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>剃刀 · 双重对撞复盘中心 | JARVIS × Shawn</title>
+<title>剃刀 · DNA 防守复盘 | JARVIS × Shawn</title>
 <style>
   :root {
-    --bg:#0a0a0c; --card:rgba(22,22,26,0.88); --card2:rgba(28,28,34,0.92);
+    --bg:#0a0a0c; --card:rgba(22,22,26,0.88); 
     --text:#e8e8ed; --text2:#98989e; --text3:#5c5c63;
-    --accent:#0af; --green:#00e676; --red:#ff3d3d; --orange:#ff9100; --yellow:#ffe600; --purple:#b388ff;
-    --border:rgba(255,255,255,0.06); --border2:rgba(255,255,255,0.1);
-    --radius:16px; --radius-sm:10px;
+    --accent:#0af; --green:#00e676; --red:#ff3d3d; --orange:#ff9100;
+    --border:rgba(255,255,255,0.06); --radius:16px;
   }
   * { margin:0; padding:0; box-sizing:border-box; }
   body {
@@ -20,451 +19,144 @@
   }
   .navbar {
     position:sticky; top:0; z-index:100;
-    backdrop-filter:blur(28px) saturate(180%); -webkit-backdrop-filter:blur(28px) saturate(180%);
-    background:rgba(10,10,12,0.78); border-bottom:1px solid var(--border);
+    backdrop-filter:blur(28px); background:rgba(10,10,12,0.78);
+    border-bottom:1px solid var(--border);
     padding:14px 24px; margin:-24px -24px 24px;
-    display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px;
+    display:flex; justify-content:space-between; align-items:center;
   }
   .navbar h1 { font-size:19px; font-weight:700; letter-spacing:-0.03em; }
   .navbar h1 span { background:linear-gradient(135deg,#e8e8ed 0%,#0af 100%); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; }
-  .nav-links { display:flex; align-items:center; gap:14px; }
   .nav-links a { font-size:12px; color:var(--accent); text-decoration:none; font-weight:600; }
-  .live { display:flex; align-items:center; gap:4px; font-size:11px; color:var(--text3); }
-  .live-dot { width:7px; height:7px; border-radius:50%; background:var(--green); box-shadow:0 0 10px rgba(0,230,118,0.5); animation:pulse 2s ease-in-out infinite; }
-  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.3} }
-  .tab-bar { display:flex; gap:2px; background:rgba(255,255,255,0.03); border-radius:10px; padding:2px; margin-bottom:20px; max-width:1200px; margin-left:auto; margin-right:auto; }
-  .tab {
-    flex:1; padding:10px 16px; border-radius:8px; border:none; background:transparent;
-    font-size:13px; font-weight:600; cursor:pointer; font-family:inherit;
-    color:var(--text2); transition:all 0.2s; text-align:center;
-  }
-  .tab.active { background:rgba(255,255,255,0.06); color:var(--text); }
-  .page { display:none; max-width:1200px; margin:0 auto; }
-  .page.active { display:block; }
-  .day-card {
-    background:var(--card); backdrop-filter:blur(20px); -webkit-backdrop-filter:blur(20px);
+  .section {
+    background:var(--card); backdrop-filter:blur(20px);
     border:1px solid var(--border); border-radius:var(--radius);
-    padding:18px 22px; margin-bottom:10px; cursor:pointer;
-    transition:all 0.2s; display:flex; justify-content:space-between; align-items:center; gap:12px;
+    padding:22px 26px; margin-bottom:16px; max-width:1000px; margin-left:auto; margin-right:auto;
   }
-  .day-card:hover { background:var(--card2); border-color:var(--border2); transform:translateY(-1px); }
-  .day-left { min-width:0; }
-  .day-date { font-size:15px; font-weight:700; margin-bottom:2px; }
-  .day-sub { font-size:11px; color:var(--text3); }
-  .day-right { display:flex; align-items:center; gap:10px; flex-shrink:0; }
-  .pill { padding:3px 10px; border-radius:12px; font-size:11px; font-weight:600; white-space:nowrap; }
-  .pill-r { background:rgba(255,61,61,0.1); color:var(--red); }
-  .pill-o { background:rgba(255,145,0,0.1); color:var(--orange); }
-  .pill-g { background:rgba(0,230,118,0.1); color:var(--green); }
-  .l-ind { display:flex; gap:6px; align-items:center; }
-  .l-ind .l1, .l-ind .l2 { font-size:10px; padding:2px 7px; border-radius:6px; font-weight:600; }
-  .l-ind .l1.done { background:rgba(0,230,118,0.1); color:var(--green); }
-  .l-ind .l2.done { background:rgba(0,230,118,0.1); color:var(--green); }
-  .l-ind .l1.wait, .l-ind .l2.wait { background:rgba(255,255,255,0.03); color:var(--text3); }
-  .empty { text-align:center; padding:60px 20px; color:var(--text3); font-size:13px; line-height:1.8; }
-  .empty small { display:block; margin-top:4px; font-size:11px; color:var(--text3); opacity:0.6; }
-  .overlay {
-    position:fixed; inset:0; z-index:200; background:rgba(0,0,0,0.55);
-    backdrop-filter:blur(4px); display:none; align-items:flex-start; justify-content:center;
-    padding:32px 12px; overflow-y:auto;
-  }
-  .overlay.show { display:flex; }
-  .panel {
-    background:var(--card); backdrop-filter:blur(28px); -webkit-backdrop-filter:blur(28px);
-    border:1px solid var(--border2); border-radius:var(--radius);
-    width:100%; max-width:780px; padding:32px;
-    box-shadow:0 24px 64px rgba(0,0,0,0.5);
-  }
-  .panel h2 { font-size:18px; font-weight:700; margin-bottom:6px; }
-  .panel .subtitle { font-size:11px; color:var(--text3); margin-bottom:24px; letter-spacing:0.04em; text-transform:uppercase; }
-  .close { float:right; background:none; border:none; font-size:22px; cursor:pointer; color:var(--text2); line-height:1; }
-  .close:hover { color:var(--text); }
-  .collision { border:1px solid var(--border); border-radius:var(--radius-sm); margin-bottom:20px; overflow:hidden; }
-  .collision-header { padding:12px 16px; font-size:12px; font-weight:700; letter-spacing:0.04em; display:flex; align-items:center; gap:8px; }
-  .collision-header.l1 { background:rgba(255,145,0,0.06); color:var(--orange); border-bottom:1px solid rgba(255,145,0,0.1); }
-  .collision-header.l2 { background:rgba(0,170,255,0.06); color:var(--accent); border-bottom:1px solid rgba(0,170,255,0.1); }
-  .collision-body { padding:16px; }
-  .collision-row { display:flex; margin-bottom:10px; font-size:12px; line-height:1.7; }
-  .collision-row .label { width:130px; flex-shrink:0; color:var(--text3); font-weight:600; }
-  .collision-row .value { color:var(--text); }
-  .collision-row .value.pred { color:var(--text2); }
-  .collision-table { width:100%; font-size:11px; border-collapse:collapse; margin-top:8px; }
-  .collision-table th { text-align:left; padding:6px 10px; color:var(--text3); font-weight:600; font-size:10px; text-transform:uppercase; letter-spacing:0.05em; border-bottom:1px solid var(--border); }
-  .collision-table td { padding:8px 10px; border-bottom:1px solid var(--border); }
-  .collision-table .dim { color:var(--text2); }
-  .collision-table .pred { color:var(--text3); }
-  .collision-table .real { font-weight:700; }
-  .collision-table .dev { font-weight:700; text-align:right; cursor:pointer; position:relative; }
-  .collision-table .dev:hover { text-decoration:underline; }
-  .formula-tip {
-    display:none; position:absolute; bottom:100%; right:0; margin-bottom:6px;
-    background:rgba(30,30,40,0.96); border:1px solid var(--border2); border-radius:8px;
-    padding:10px 14px; font-size:12px; font-family:'SF Mono',monospace; color:var(--accent);
-    white-space:nowrap; z-index:300; pointer-events:none;
-    box-shadow:0 8px 24px rgba(0,0,0,0.5); max-width:450px; white-space:normal;
-  }
-  .collision-table .dev:hover .formula-tip { display:block; }
-  .verdict-badge { display:inline-block; padding:4px 12px; border-radius:6px; font-size:12px; font-weight:700; margin-top:8px; }
-  .verdict-badge.r { background:rgba(255,61,61,0.1); color:var(--red); }
-  .verdict-badge.o { background:rgba(255,145,0,0.1); color:var(--orange); }
-  .verdict-badge.g { background:rgba(0,230,118,0.1); color:var(--green); }
-  .attr-block { margin-bottom:20px; }
-  .attr-block h4 { font-size:11px; text-transform:uppercase; letter-spacing:0.06em; color:var(--text3); margin-bottom:10px; }
-  .attr-item { padding:10px 14px; border-radius:8px; margin-bottom:6px; font-size:12px; line-height:1.6; }
-  .attr-item.right { background:rgba(0,230,118,0.04); border-left:3px solid var(--green); }
-  .attr-item.wrong { background:rgba(255,61,61,0.04); border-left:3px solid var(--red); }
-  .attr-item.fix { background:rgba(0,170,255,0.04); border-left:3px solid var(--accent); }
-  .sum-card {
-    background:var(--card); backdrop-filter:blur(20px); -webkit-backdrop-filter:blur(20px);
-    border:1px solid var(--border); border-radius:var(--radius); padding:24px; margin-bottom:16px;
-  }
-  .sum-card h3 { font-size:15px; font-weight:700; margin-bottom:16px; }
-  .stat-row { display:flex; gap:12px; flex-wrap:wrap; margin-bottom:16px; }
-  .stat {
-    flex:1; min-width:70px; text-align:center; padding:14px 8px;
-    background:rgba(255,255,255,0.02); border-radius:12px; border:1px solid var(--border);
-  }
-  .stat .num { font-size:22px; font-weight:700; }
-  .stat .lbl { font-size:9px; color:var(--text3); margin-top:2px; text-transform:uppercase; letter-spacing:0.06em; }
-  .stat .sub { font-size:10px; color:var(--text3); margin-top:2px; }
-  .sum-content { font-size:12px; line-height:1.8; color:var(--text2); }
-  .sum-content li { margin-bottom:3px; }
-  .sum-content strong { color:var(--text); }
-  
-  /* Hard-coding ledger */
-  .ledger-item {
-    background:rgba(255,255,255,0.02); border:1px solid var(--border); border-radius:10px;
-    padding:14px 18px; margin-bottom:8px; display:flex; justify-content:space-between; align-items:center; gap:12px;
-  }
-  .ledger-item .ledger-left { min-width:0; }
-  .ledger-item .ledger-id { font-size:10px; color:var(--text3); font-family:monospace; margin-bottom:2px; }
-  .ledger-item .ledger-name { font-size:14px; font-weight:600; margin-bottom:2px; }
-  .ledger-item .ledger-detail { font-size:11px; color:var(--text2); }
-  .ledger-status { padding:4px 10px; border-radius:6px; font-size:10px; font-weight:700; white-space:nowrap; }
-  .ledger-status.fixed { background:rgba(0,230,118,0.1); color:var(--green); }
-  .ledger-status.wip { background:rgba(255,145,0,0.1); color:var(--orange); }
-  .ledger-status.ok { background:rgba(0,170,255,0.1); color:var(--accent); }
-  
-  /* Thresholds bar */
-  .threshold-bar {
-    background:var(--card); border:1px solid var(--border); border-radius:var(--radius);
-    padding:20px 24px; margin-bottom:16px; display:flex; gap:24px; flex-wrap:wrap; align-items:center;
-  }
-  .threshold-bar .th-item { min-width:120px; }
-  .threshold-bar .th-label { font-size:10px; color:var(--text3); text-transform:uppercase; letter-spacing:0.06em; margin-bottom:4px; }
-  .threshold-bar .th-value { font-size:20px; font-weight:700; }
-  .threshold-bar .th-sub { font-size:10px; color:var(--text2); }
+  .section h2 { font-size:17px; font-weight:700; margin-bottom:16px; letter-spacing:-0.02em; }
+  table { width:100%; border-collapse:collapse; font-size:13px; }
+  th { text-align:left; font-size:11px; font-weight:600; text-transform:uppercase; letter-spacing:0.06em; color:var(--text3); padding:8px 10px; border-bottom:1px solid var(--border); }
+  td { padding:10px 10px; border-bottom:1px solid rgba(255,255,255,0.03); font-variant-numeric:tabular-nums; }
+  tr:last-child td { border-bottom:none; }
+  .score-ok { color:var(--green); font-weight:700; }
+  .score-warn { color:var(--orange); font-weight:700; }
+  .score-bad { color:var(--red); font-weight:700; }
+  .tag { display:inline-block; padding:2px 8px; border-radius:10px; font-size:10px; font-weight:600; letter-spacing:0.03em; }
+  .tag-buy { background:rgba(0,170,255,0.15); color:var(--accent); }
+  .tag-sell { background:rgba(255,61,61,0.15); color:var(--red); }
+  .tag-hold { background:rgba(255,145,0,0.15); color:var(--orange); }
+  .weight-fix { font-size:11px; color:var(--text3); margin-top:8px; padding:8px 12px; background:rgba(255,255,255,0.03); border-radius:8px; border-left:2px solid var(--accent); }
+  .weight-fix strong { color:var(--text); }
+  .empty { text-align:center; padding:40px; color:var(--text3); font-size:14px; }
+  .empty small { display:block; margin-top:6px; font-size:12px; }
+  .footer { text-align:center; padding:24px; font-size:12px; color:var(--text3); max-width:1000px; margin:0 auto; }
 </style>
 </head>
 <body>
 
-<nav class="navbar">
-  <div><h1><span>🔪 剃刀 · 双重对撞</span> 复盘中心</h1></div>
+<div class="navbar">
+  <h1>🛡️ <span>DNA · 防守复盘</span></h1>
   <div class="nav-links">
     <a href="index.html">← 仪表盘</a>
-    <span class="live"><span class="live-dot"></span>15:30 / 09:26 双哨兵</span>
   </div>
-</nav>
-
-<div class="tab-bar">
-  <button class="tab active" onclick="switchTab('daily')">📅 每日对撞</button>
-  <button class="tab" onclick="switchTab('weekly')">📊 每周归因</button>
-  <button class="tab" onclick="switchTab('monthly')">🌙 每月压力测试</button>
-  <button class="tab" onclick="switchTab('ledger')">📋 硬编码清单</button>
 </div>
 
-<div class="page active" id="daily"><div id="daily-list"></div></div>
-<div class="page" id="weekly"><div id="weekly-area"></div></div>
-<div class="page" id="monthly"><div id="monthly-area"></div></div>
-<div class="page" id="ledger"><div id="ledger-area"></div></div>
+<div class="section">
+  <h2>🧬 DNA 评分对撞表</h2>
+  <p style="font-size:13px;color:var(--text2);margin-bottom:16px">
+    防守协议 v1：仅关注标的入场 DNA 评分 → 跌破 80 分清仓 → 持仓期间负面事件。气压计/竞价家数/全场涨停数等宏观指标已永久删除。
+  </p>
+  <table>
+    <thead>
+      <tr>
+        <th>日期</th>
+        <th>标的</th>
+        <th>操作</th>
+        <th>入场DNA</th>
+        <th>离场DNA</th>
+        <th>持仓天数</th>
+        <th>盈亏</th>
+        <th>负面事件</th>
+        <th>权重修正</th>
+      </tr>
+    </thead>
+    <tbody id="dna-table">
+      <tr><td colspan="9" class="empty">等待数据同步…<br><small>每日15:30自动更新</small></td></tr>
+    </tbody>
+  </table>
+</div>
 
-<div class="overlay" id="modal" onclick="if(event.target===this)closeModal()">
-  <div class="panel" id="modal-body"></div>
+<div class="section">
+  <h2>⚖️ DNA 权重自省</h2>
+  <p style="font-size:13px;color:var(--text2);margin-bottom:14px">
+    如果某笔交易亏损，直接回答：是 DNA 模型里哪个维度给了错误权重？修正了什么？
+  </p>
+  <div id="weight-log">
+    <div class="empty">暂无权重修正记录<br><small>出现亏损交易时自动写入</small></div>
+  </div>
+</div>
+
+<div class="footer">
+  JARVIS 自主决策 · DNA 防守协议 v1 · 对撞/气压计/进化已永久删除
 </div>
 
 <script>
-let E = { evo:[], mem:{}, barometer:null, pivot:null, ledger:null };
-
-async function loadJSON(path) {
-  let r = await fetch('data/'+path+'?'+Date.now());
-  if (r.ok) return r.json();
-  r = await fetch('https://raw.githubusercontent.com/yuanshao1983/trading-dashboard/main/data/'+path);
-  if (r.ok) return r.json();
-  return null;
-}
-
-async function boot() {
-  const c = document.getElementById('daily-list');
-  c.innerHTML = '<div class="empty">加载中…</div>';
+(async () => {
+  // Load trades for DNA analysis
+  let trades = [];
   try {
-    const [evo, mem, baro, piv, ledg] = await Promise.all([
-      loadJSON('evolution_deviation_log.json'),
-      loadJSON('market_evolution_memory.json'),
-      loadJSON('barometer_thresholds.json'),
-      loadJSON('pivot_boundary.json'),
-      loadJSON('hard_coding_ledger.json'),
-    ]);
-    E.evo = (Array.isArray(evo)?evo:[]).reverse();
-    E.mem = mem||{};
-    E.barometer = baro;
-    E.pivot = piv;
-    E.ledger = ledg;
-  } catch(e) { console.error(e); }
-  renderDaily();
-}
-
-function switchTab(t) {
-  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
-  document.getElementById(t).classList.add('active');
-  document.querySelectorAll('.tab').forEach((b,i)=>b.classList.toggle('active',['daily','weekly','monthly','ledger'][i]===t));
-  if (t==='weekly') renderWeekly();
-  if (t==='monthly') renderMonthly();
-  if (t==='ledger') renderLedger();
-}
-
-function renderDaily() {
-  const c = document.getElementById('daily-list');
-  if (!E.evo.length) {
-    c.innerHTML = '<div class="empty">暂无对撞记录<br><small>首次 09:26 核验触发后，对撞数据自动归档</small></div>';
-    return;
-  }
-
-  // Dynamic thresholds bar
-  let thHTML = '';
-  if (E.barometer && E.pivot) {
-    const bm = E.barometer.thresholds.meltdown_line;
-    const bh = E.barometer.thresholds.hesitate_upper;
-    const pv = Math.round(E.pivot.pivot.survival_boundary);
-    const ma = Math.round(E.pivot.pivot.ma20);
-    thHTML = `<div class="threshold-bar">
-      <div class="th-item"><div class="th-label">🔴 气压计熔断</div><div class="th-value" style="color:var(--red)">${bm}家</div><div class="th-sub">下5%分位 · ${E.barometer.stats.n_days}天样本</div></div>
-      <div class="th-item"><div class="th-label">🟡 犹豫区</div><div class="th-value" style="color:var(--orange)">${bh}家</div><div class="th-sub">下15%分位</div></div>
-      <div class="th-item"><div class="th-label">🎯 动态生存边界</div><div class="th-value" style="color:var(--accent)">${pv}</div><div class="th-sub">MA20=${ma} · ATR补偿</div></div>
-    </div>`;
-  }
-
-  c.innerHTML = thHTML + E.evo.map((day,i) => {
-    const sev = (day.verdict||'').includes('重度')?'r':((day.verdict||'').includes('中度')?'o':'g');
-    const devs = day.deviations||[];
-    const r = devs.filter(d=>d.severity==='🔴'||d.severity==='🔴🔴').length;
-    const y = devs.filter(d=>d.severity==='🟡').length;
-    const hasL2 = !!(day.morning_prediction||day.l2_verification);
-    return `<div class="day-card" onclick="openDay(${i})">
-      <div class="day-left">
-        <div class="day-date">📅 ${day.date} ${(day.time||'').slice(0,5)}</div>
-        <div class="day-sub">
-          <span class="l-ind">
-            <span class="l1 done">L1 昨晚→竞价</span>
-            <span class="l2 ${hasL2?'done':'wait'}">L2 竞价→收盘${hasL2?'':' 待接入'}</span>
-          </span>
-        </div>
-      </div>
-      <div class="day-right">
-        <span style="font-size:12px;font-weight:600;color:var(--${sev==='r'?'red':(sev==='o'?'orange':'green')})">${day.verdict||'待核验'}</span>
-        <span class="pill pill-${sev}">${r>0?'🔴'+r+'维':''}${y>0?' 🟡'+y+'维':''}${r===0&&y===0?'✅':''}</span>
-      </div>
-    </div>`;
-  }).join('');
-}
-
-function openDay(i) {
-  const day = E.evo[i], devs = day.deviations||[];
-  const dims = ['竞价上涨家数','大盘多空开盘','气压计状态','全场涨停数','L4候选期望值'];
-  const memPred = E.mem?.predictions||{};
-  const keys = ['dim1_bid_up_count','dim2_open_direction','dim3_barometer','dim4_zt_count','dim5_l4_expectation'];
-  const hasL2 = !!(day.morning_prediction||day.l2_verification);
-
-  let l1Rows = '';
-  for (let j=0;j<5;j++) {
-    const d = devs[j];
-    const pred = d?.pred || memPred[keys[j]]?.value || '—';
-    const real = d?.real || '—';
-    const dev = d?.dev||0;
-    const sev = d?.severity||'⚪';
-    const formula = d?.formula || '';
-    const clr = (sev||'').includes('🔴')?'var(--red)':((sev||'').includes('🟡')?'var(--orange)':'var(--green)');
-    const hitBadge = (sev||'').includes('命中') ? ' 🟢命中' : '';
-    l1Rows += `<tr><td class="dim">${dims[j]}</td><td class="pred">${pred}</td><td class="real">${real}</td>
-      <td class="dev" style="color:${clr};position:relative">
-        ${sev} ${dev.toFixed(0)}%${hitBadge}
-        ${formula ? `<span class="formula-tip">📐 ${formula}</span>` : ''}
-      </td></tr>`;
-  }
-
-  const mp = day.morning_prediction||null;
-  const l2v = day.l2_verification||null;
-
-  let l2HTML = '';
-  if (mp) {
-    l2HTML += `<div class="collision-row"><span class="label">大盘走势预测</span><span class="value pred">${mp.market||'—'}</span></div>`;
-    l2HTML += `<div class="collision-row"><span class="label">核心板块预测</span><span class="value pred">${mp.sectors||'—'}</span></div>`;
-    l2HTML += `<div class="collision-row"><span class="label">重点个股预测</span><span class="value pred">${mp.stocks||'—'}</span></div>`;
-  } else {
-    l2HTML += `<div class="collision-row"><span class="label">状态</span><span class="value" style="color:var(--text3)">09:26当日预测数据缺失</span></div>`;
-  }
-  if (l2v) {
-    l2HTML += `<div style="margin-top:12px;padding-top:10px;border-top:1px solid var(--border);">`;
-    const accColor = l2v.accuracy>=70?'var(--green)':(l2v.accuracy>=40?'var(--orange)':'var(--red)');
-    l2HTML += `<div class="collision-row"><span class="label">📊 收盘真实走势</span><span class="value">${l2v.market_real||'—'}</span></div>`;
-    l2HTML += `<div class="collision-row"><span class="label">📊 板块实盘表现</span><span class="value">${l2v.sector_real||'—'}</span></div>`;
-    l2HTML += `<div class="collision-row"><span class="label">📊 个股实盘表现</span><span class="value">${l2v.stock_real||'—'}</span></div>`;
-    l2HTML += `<div class="collision-row"><span class="label">🎯 L2准确度评分</span><span class="value" style="font-weight:700;font-size:15px;color:${accColor}">${l2v.accuracy||'—'}% — ${l2v.verdict||'—'}</span></div>`;
-  }
-
-  const attr = day.deep_attribution||null;
-  let attrHTML = '<div class="attr-block"><h4>🧬 深度归因 & 策略补丁</h4>';
-  if (attr) {
-    if (attr.right) attrHTML += `<div class="attr-item right"><strong>✅ 对了什么：</strong>${attr.right}</div>`;
-    if (attr.wrong) attrHTML += `<div class="attr-item wrong"><strong>❌ 错了什么：</strong>${attr.wrong}</div>`;
-    if (attr.root_cause) attrHTML += `<div class="attr-item wrong"><strong>🔍 根因：</strong>${attr.root_cause}</div>`;
-    if (attr.fix) attrHTML += `<div class="attr-item fix"><strong>🔧 改正方案：</strong>${attr.fix}</div>`;
-    if (attr.patch) attrHTML += `<div class="attr-item fix"><strong>📝 新补丁：</strong>${attr.patch}</div>`;
-  } else {
-    const bad = devs.filter(d=>(d.severity||'').includes('🔴')), good = devs.filter(d=>(d.severity||'').includes('命中'));
-    if (good.length) attrHTML += `<div class="attr-item right"><strong>✅ 对了什么：</strong>${good.map(d=>d.name).join('、')} 命中区间。</div>`;
-    if (bad.length) {
-      attrHTML += `<div class="attr-item wrong"><strong>❌ 错了什么：</strong>${bad.map(d=>d.name).join('、')} 偏差超标。</div>`;
-      attrHTML += `<div class="attr-item fix"><strong>🔧 改正方案：</strong>标准化偏差引擎v2.0 — Type A区间/Type B方向/Type C时间。</div>`;
+    let r = await fetch('data/trades.json?' + Date.now());
+    if (!r.ok) r = await fetch('https://raw.githubusercontent.com/yuanshao1983/trading-dashboard/main/data/trades.json');
+    if (r.ok) {
+      let d = await r.json();
+      trades = d.trades || [];
     }
+  } catch(e) {}
+
+  // Load weight fixes if any
+  let fixes = [];
+  try {
+    let r = await fetch('data/dna_weight_fixes.json?' + Date.now());
+    if (r.ok) fixes = await r.json();
+  } catch(e) {}
+
+  // Render DNA table
+  if (trades.length > 0) {
+    document.getElementById('dna-table').innerHTML = trades.map((t,i) => {
+      let entryScore = t.dna_entry || '—';
+      let exitScore = t.dna_exit || '—';
+      let event = t.negative_event || '—';
+      let fix = t.weight_fix || '—';
+      let pnl = t.pnl != null ? '¥'+t.pnl.toLocaleString() : '—';
+      let pnlCls = t.pnl > 0 ? 'score-ok' : (t.pnl < 0 ? 'score-bad' : '');
+      let opTag = t.buy_date && !t.sell_date ? 'tag-hold' : (t.sell_date ? 'tag-sell' : 'tag-buy');
+      let opLabel = t.buy_date && !t.sell_date ? '持仓' : (t.sell_date ? '卖出' : '买入');
+      
+      return `<tr>
+        <td>${t.buy_date||'—'}</td>
+        <td><strong>${t.name||'—'}</strong> <span style="color:var(--text3)">${t.code||''}</span></td>
+        <td><span class="tag ${opTag}">${opLabel}</span></td>
+        <td class="${typeof entryScore === 'number' ? (entryScore >= 80 ? 'score-ok' : 'score-bad') : ''}">${entryScore}</td>
+        <td class="${typeof exitScore === 'number' ? (exitScore >= 80 ? 'score-ok' : 'score-bad') : ''}">${exitScore}</td>
+        <td>${t.holding_days||'—'}天</td>
+        <td class="${pnlCls}">${pnl}</td>
+        <td style="font-size:12px;color:var(--text2)">${event}</td>
+        <td style="font-size:12px;color:var(--text2)">${fix}</td>
+      </tr>`;
+    }).join('');
   }
-  attrHTML += '</div>';
 
-  document.getElementById('modal-body').innerHTML = `
-    <button class="close" onclick="closeModal()">✕</button>
-    <h2>📅 ${day.date} 双重对撞报告</h2>
-    <div class="subtitle">Epoch ${day.date} · 两层对撞闭环 · 偏差公式可溯源</div>
-    <div class="collision">
-      <div class="collision-header l1">🌙 第一层对撞：昨晚 15:30 预测 → 今早 09:26 竞价核验</div>
-      <div class="collision-body">
-        <table class="collision-table">
-          <tr><th>预测维度</th><th>昨晚预测值</th><th>今早真实值</th><th>偏差（悬浮看公式）</th></tr>
-          ${l1Rows}
-        </table>
-        <div style="margin-top:10px;">
-          <span class="verdict-badge ${(day.verdict||'').includes('重度')?'r':((day.verdict||'').includes('中度')?'o':'g')}">${day.verdict||'待核验'}</span>
-        </div>
+  // Render weight fixes
+  if (fixes.length > 0) {
+    document.getElementById('weight-log').innerHTML = fixes.map(f => `
+      <div class="weight-fix">
+        <strong>${f.date} · ${f.stock}</strong> — 
+        维度「${f.dimension}」权重从 ${f.old_weight} → ${f.new_weight}<br>
+        原因：${f.reason}
       </div>
-    </div>
-    <div class="collision">
-      <div class="collision-header l2">☀️ 第二层对撞：今早 09:26 竞价预测当日 → 15:30 收盘清算</div>
-      <div class="collision-body">${l2HTML}</div>
-    </div>
-    ${attrHTML}
-  `;
-  document.getElementById('modal').classList.add('show');
-}
-
-function closeModal() { document.getElementById('modal').classList.remove('show'); }
-
-function renderLedger() {
-  const c = document.getElementById('ledger-area');
-  if (!E.ledger) {
-    c.innerHTML = '<div class="empty">硬编码清单数据待接入<br><small>运行 hard_coding_sentry.py 后自动生成</small></div>';
-    return;
+    `).join('');
   }
-  const cats = E.ledger.categories||[];
-  const fixed = cats.filter(x=>x.status.includes('已动态化')||x.status.includes('可配置'));
-  const wip = cats.filter(x=>x.status.includes('待修复')||x.status.includes('部分'));
-  const inactive = cats.filter(x=>x.status.includes('LOW'));
-
-  c.innerHTML = `
-    <div class="threshold-bar">
-      <div class="th-item"><div class="th-label">✅ 已动态化</div><div class="th-value" style="color:var(--green)">${fixed.length}</div></div>
-      <div class="th-item"><div class="th-label">🔧 待修复</div><div class="th-value" style="color:var(--orange)">${wip.length}</div></div>
-      <div class="th-item"><div class="th-label">🟢 可接受</div><div class="th-value" style="color:var(--accent)">${inactive.length}</div></div>
-      <div class="th-item"><div class="th-label">📋 总审计</div><div class="th-value">${E.ledger.summary.total_findings}</div><div class="th-sub">${E.ledger.summary.false_positives}条误报</div></div>
-    </div>
-    ${cats.map(item => {
-      let statusCls = 'ok', statusText = item.status;
-      if (item.status.includes('已动态化')) { statusCls = 'fixed'; statusText = '✅ 已动态化'; }
-      else if (item.status.includes('待修复')) { statusCls = 'wip'; statusText = '🔧 待修复'; }
-      else if (item.status.includes('部分')) { statusCls = 'wip'; statusText = '⚠️ 部分'; }
-      return `<div class="ledger-item">
-        <div class="ledger-left">
-          <div class="ledger-id">${item.id} · ${item.severity}</div>
-          <div class="ledger-name">${item.name}</div>
-          <div class="ledger-detail">旧: ${item.old_value||'—'} → 新: ${item.new_dynamic||item.target_dynamic||'—'}</div>
-        </div>
-        <span class="ledger-status ${statusCls}">${statusText}</span>
-      </div>`;
-    }).join('')}
-  `;
-}
-
-function renderWeekly() {
-  const c = document.getElementById('weekly-area');
-  if (!E.evo.length) { c.innerHTML='<div class="empty">数据不足 — 至少需要一个交易日</div>'; return; }
-  const weeks = {};
-  E.evo.forEach(day => {
-    const d = new Date(day.date), ws = new Date(d); ws.setDate(d.getDate()-d.getDay()+1);
-    const wk = ws.toISOString().slice(0,10);
-    if (!weeks[wk]) weeks[wk] = [];
-    weeks[wk].push(day);
-  });
-  c.innerHTML = Object.entries(weeks).sort((a,b)=>b[0].localeCompare(a[0])).map(([wk,days]) => {
-    const ok = days.filter(d=>!(d.verdict||'').includes('重度')&&!(d.verdict||'').includes('中度')).length;
-    const warn = days.filter(d=>(d.verdict||'').includes('中度')).length;
-    const bad = days.filter(d=>(d.verdict||'').includes('重度')).length;
-    const acc = days.length?(ok/days.length*100).toFixed(0):0;
-    const allD = days.flatMap(d=>d.deviations||[]), redD = allD.filter(d=>(d.severity||'').includes('🔴'));
-    const topIssues = [...new Set(redD.map(d=>d.name))];
-    const l2Days = days.filter(d=>!!d.l2_verification);
-    const l2Acc = l2Days.length?(l2Days.filter(d=>(d.l2_verification?.accuracy||0)>=70).length/l2Days.length*100).toFixed(0):'—';
-    return `<div class="sum-card">
-      <h3>📊 ${wk} 起 · ${days.length}个交易日</h3>
-      <div class="stat-row">
-        <div class="stat"><div class="num" style="color:var(--green)">${ok}</div><div class="lbl">L1准确</div></div>
-        <div class="stat"><div class="num" style="color:var(--orange)">${warn}</div><div class="lbl">L1偏离</div></div>
-        <div class="stat"><div class="num" style="color:var(--red)">${bad}</div><div class="lbl">L1重度</div></div>
-        <div class="stat"><div class="num">${acc}%</div><div class="lbl">L1准确率</div></div>
-        <div class="stat"><div class="num" style="color:var(--accent)">${l2Days.length}</div><div class="lbl">L2覆盖</div><div class="sub">${l2Acc!=='—'?'准确率'+l2Acc+'%':''}</div></div>
-      </div>
-      <div class="sum-content"><strong>归因 & 优化：</strong><ul>
-        <li>${topIssues.length?`高频偏差: ${topIssues.join('、')}`:'无高频偏差维度'}</li>
-        <li>${bad}天重度失真${bad/days.length>0.3?' → 触发策略收紧':''}</li>
-        <li>L2覆盖 ${l2Days.length}/${days.length}天${l2Acc!=='—'?'，准确率'+l2Acc+'%':''}</li>
-        <li>偏差引擎v2.0已部署：区间归零+方向近失+公式溯源</li>
-      </ul></div>
-    </div>`;
-  }).join('');
-}
-
-function renderMonthly() {
-  const c = document.getElementById('monthly-area');
-  if (!E.evo.length) { c.innerHTML='<div class="empty">数据不足</div>'; return; }
-  const months = {};
-  E.evo.forEach(day => { const m = day.date.slice(0,7); if (!months[m]) months[m] = []; months[m].push(day); });
-  c.innerHTML = Object.entries(months).sort((a,b)=>b[0].localeCompare(a[0])).map(([mo,days]) => {
-    const ok = days.filter(d=>!(d.verdict||'').includes('重度')&&!(d.verdict||'').includes('中度')).length;
-    const warn = days.filter(d=>(d.verdict||'').includes('中度')).length;
-    const bad = days.filter(d=>(d.verdict||'').includes('重度')).length;
-    const acc = days.length?(ok/days.length*100).toFixed(0):0;
-    const allD = days.flatMap(d=>d.deviations||[]);
-    const avgDev = allD.length?(allD.reduce((s,d)=>s+(d.dev||0),0)/allD.length).toFixed(0):0;
-    const redD = allD.filter(d=>(d.severity||'').includes('🔴'));
-    const worstDim = Object.entries(redD.reduce((m,d)=>{m[d.name]=(m[d.name]||0)+1;return m;},{})).sort((a,b)=>b[1]-a[1])[0];
-    const l2Days = days.filter(d=>!!d.l2_verification);
-    const l2Acc = l2Days.length?(l2Days.filter(d=>(d.l2_verification?.accuracy||0)>=70).length/l2Days.length*100).toFixed(0):'—';
-    return `<div class="sum-card">
-      <h3>🌙 ${mo} · ${days.length}个交易日</h3>
-      <div class="stat-row">
-        <div class="stat"><div class="num" style="color:var(--green)">${ok}</div><div class="lbl">L1准确</div></div>
-        <div class="stat"><div class="num" style="color:var(--orange)">${warn}</div><div class="lbl">L1偏离</div></div>
-        <div class="stat"><div class="num" style="color:var(--red)">${bad}</div><div class="lbl">L1重度</div></div>
-        <div class="stat"><div class="num">${acc}%</div><div class="lbl">L1准确率</div></div>
-        <div class="stat"><div class="num">${avgDev}%</div><div class="lbl">月均偏差</div></div>
-      </div>
-      <div class="sum-content"><strong>综合分析：</strong><ul>
-        <li>${worstDim?`最需修复维度: ${worstDim[0]}（${worstDim[1]}次）`:''}</li>
-        <li>L1月均偏差: ${avgDev}% · ${acc>=70?'表现良好':'审查阈值钝化'}</li>
-        <li>${bad/days.length>0.3?'重度占比超30%，触发收紧':'重度占比可控'}</li>
-        <li>动态阈值: 气压计${E.barometer?.thresholds?.meltdown_line||'?'}家 | 中枢${Math.round(E.pivot?.pivot?.survival_boundary||0)}</li>
-      </ul></div>
-    </div>`;
-  }).join('');
-}
-
-boot();
+})();
 </script>
+
 </body>
 </html>
