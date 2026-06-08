@@ -3,221 +3,183 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>剃刀 · 持仓仪表盘</title>
+<title>Trinity 控制台</title>
 <style>
-  :root {
-    --bg:#0a0a0c; --card:rgba(22,22,26,0.88); --card2:rgba(28,28,34,0.92);
-    --text:#e8e8ed; --text2:#98989e; --text3:#5c5c63;
-    --accent:#0af; --green:#00e676; --red:#ff3d3d; --orange:#ff9100;
-    --border:rgba(255,255,255,0.06); --radius:16px; --radius-sm:10px;
-  }
-  * { margin:0; padding:0; box-sizing:border-box; }
-  body {
-    background:var(--bg); color:var(--text);
-    font-family:-apple-system,BlinkMacSystemFont,'SF Pro Display','Segoe UI',Roboto,sans-serif;
-    padding:24px; min-height:100vh; -webkit-font-smoothing:antialiased; letter-spacing:-0.01em; line-height:1.55;
-  }
-  .navbar {
-    position:sticky; top:0; z-index:100;
-    backdrop-filter:blur(28px); background:rgba(10,10,12,0.78);
-    border-bottom:1px solid var(--border);
-    padding:14px 24px; margin:-24px -24px 24px;
-    display:flex; justify-content:space-between; align-items:center;
-  }
-  .navbar h1 { font-size:19px; font-weight:700; letter-spacing:-0.03em; }
-  .navbar h1 span { background:linear-gradient(135deg,#e8e8ed 0%,#0af 100%); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; }
-  .nav-links a { font-size:12px; color:var(--accent); text-decoration:none; font-weight:600; }
-  .container { max-width:960px; margin:0 auto; }
-  
-  /* Stat cards */
-  .stat-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:12px; margin-bottom:20px; }
-  .stat-card {
-    background:var(--card); border:1px solid var(--border); border-radius:var(--radius);
-    padding:16px 20px; text-align:center;
-  }
-  .stat-card .label { font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:0.08em; color:var(--text3); margin-bottom:4px; }
-  .stat-card .value { font-size:28px; font-weight:700; letter-spacing:-0.03em; }
-  .stat-card .sub { font-size:11px; color:var(--text2); margin-top:2px; }
-  .green { color:var(--green); } .red { color:var(--red); }
-  
-  /* Section */
-  .section {
-    background:var(--card); border:1px solid var(--border); border-radius:var(--radius);
-    padding:22px 26px; margin-bottom:16px;
-  }
-  .section h2 { font-size:16px; font-weight:700; margin-bottom:16px; letter-spacing:-0.02em; display:flex; align-items:center; gap:8px; }
-  .section h2 .badge { font-size:11px; font-weight:600; padding:3px 10px; border-radius:20px; }
-  .badge-danger { background:rgba(255,61,61,0.15); color:var(--red); }
-  .badge-ok { background:rgba(0,230,118,0.15); color:var(--green); }
-  
-  /* Holdings table */
-  table { width:100%; border-collapse:collapse; font-size:13px; }
-  th { text-align:left; font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:0.06em; color:var(--text3); padding:8px 10px; border-bottom:1px solid var(--border); }
-  td { padding:12px 10px; border-bottom:1px solid rgba(255,255,255,0.03); font-variant-numeric:tabular-nums; }
-  tr:last-child td { border-bottom:none; }
-  tr.danger { background:rgba(255,61,61,0.06); }
-  tr.danger td:first-child { border-left:2px solid var(--red); padding-left:8px; }
-  
-  .dna-score { font-weight:700; font-size:15px; }
-  .dna-danger { color:var(--red); }
-  .dna-warn { color:var(--orange); }
-  .dna-ok { color:var(--green); }
-  
-  .dim-badge {
-    display:inline-block; padding:2px 6px; border-radius:6px; font-size:10px; font-weight:600;
-    background:rgba(255,145,0,0.12); color:var(--orange); margin-left:4px;
-  }
-  
-  .empty-state { text-align:center; padding:40px; color:var(--text3); }
-  .empty-state .emoji { font-size:40px; margin-bottom:12px; }
-  
-  /* Footer */
-  .footer { text-align:center; padding:24px; font-size:11px; color:var(--text3); }
-  .footer a { color:var(--accent); text-decoration:none; }
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{background:#0f0f1a;color:#e0e0e0;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;padding:20px;line-height:1.5}
+  .container{max-width:1100px;margin:0 auto}
+  h1{font-size:20px;color:#fff;margin-bottom:4px}
+  .sub{color:#888;font-size:12px;margin-bottom:20px}
+
+  .kpi-row{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:24px}
+  .kpi-card{background:#1a1a2e;border-radius:8px;padding:14px 18px;flex:1;min-width:140px;border-left:3px solid #333}
+  .kpi-card .label{font-size:11px;color:#888;text-transform:uppercase;margin-bottom:4px}
+  .kpi-card .value{font-size:22px;font-weight:700}
+  .kpi-card .subv{font-size:12px;color:#666}
+
+  .section{background:#1a1a2e;border-radius:8px;padding:18px 20px;margin-bottom:18px}
+  .section h2{font-size:15px;color:#fff;margin-bottom:14px;padding-bottom:8px;border-bottom:1px solid #2a2a3e}
+  .section h3{font-size:13px;color:#aaa;margin:14px 0 8px}
+
+  table{width:100%;border-collapse:collapse;font-size:13px}
+  th{text-align:left;color:#888;font-weight:500;font-size:11px;text-transform:uppercase;padding:8px 6px;border-bottom:1px solid #2a2a3e}
+  td{padding:7px 6px;border-bottom:1px solid #1e1e32}
+  tr:hover{background:rgba(255,255,255,0.02)}
+
+  .up,.buy,.profit{color:#ef4444}
+  .down,.sell,.loss{color:#22c55e}
+  .badge{font-size:10px;padding:2px 7px;border-radius:10px;font-weight:600}
+  .badge-up{background:rgba(239,68,68,0.15);color:#ef4444}
+  .badge-down{background:rgba(34,197,94,0.15);color:#22c55e}
+  .badge-sealed{background:rgba(239,68,68,0.15);color:#ef4444}
+  .badge-meltdown{background:rgba(200,50,50,0.2);color:#ff6666}
+  .badge-ok{background:rgba(34,197,94,0.12);color:#22c55e}
+  .badge-warn{background:rgba(234,179,8,0.15);color:#eab308}
+  .badge-test{background:rgba(59,130,246,0.15);color:#3b82f6}
+
+  .health-bar{padding:10px 14px;border-radius:6px;margin-bottom:12px;font-size:13px}
+  .health-ok{background:rgba(34,197,94,0.08);border:1px solid rgba(34,197,94,0.2)}
+  .health-warn{background:rgba(234,179,8,0.08);border:1px solid rgba(234,179,8,0.2)}
+  .health-critical{background:rgba(239,68,68,0.08);border:1px solid rgba(239,68,68,0.2)}
+
+  .verdict{background:#16162a;border-radius:6px;padding:14px 16px;margin-top:12px}
+  .verdict .title{font-size:12px;color:#888;margin-bottom:4px}
+  .verdict .text{font-size:14px;color:#ddd}
+
+  .empty-state{color:#555;font-style:italic;padding:20px 0;text-align:center;font-size:13px}
+  .macro-detail{font-size:11px;color:#777;margin-top:2px}
 </style>
 </head>
 <body>
-
-<div class="navbar">
-  <h1>🛡️ <span>剃刀 · 持仓仪表盘</span></h1>
-  <div class="nav-links">
-    <a href="pdca.html">DNA 防守复盘 →</a>
-  </div>
-</div>
-
 <div class="container">
 
-  <!-- Account Stats -->
-  <div class="stat-grid" id="stats"></div>
+<h1>⚡ Trinity 交易控制台</h1>
+<div class="sub" id="ts">加载中...</div>
 
-  <!-- ═══ 持仓清单 (核心) ═══ -->
-  <div class="section">
-    <h2>
-      📊 当前持仓
-      <span class="badge" id="holding-badge"></span>
-    </h2>
-    <table>
-      <thead>
-        <tr>
-          <th>标的</th>
-          <th>持仓</th>
-          <th>入场价</th>
-          <th>现价</th>
-          <th>盈亏</th>
-          <th>DNA 评分</th>
-          <th>最弱维度</th>
-        </tr>
-      </thead>
-      <tbody id="holdings-body">
-        <tr><td colspan="7" class="empty-state"><div class="emoji">📭</div>空仓 — 等待入场信号</td></tr>
-      </tbody>
-    </table>
-  </div>
+<div class="kpi-row">
+  <div class="kpi-card"><div class="label">资产总额</div><div class="value" id="kp_total">-</div></div>
+  <div class="kpi-card"><div class="label">可用现金</div><div class="value" id="kp_cash">-</div></div>
+  <div class="kpi-card"><div class="label">累计盈亏</div><div class="value" id="kp_pnl">-</div><div class="subv" id="kp_pnlpct"></div></div>
+  <div class="kpi-card"><div class="label">交易统计</div><div class="value" id="kp_trades">-</div><div class="subv" id="kp_winrate"></div></div>
+</div>
 
-  <!-- Trade History -->
-  <div class="section">
-    <h2>📋 交易记录</h2>
-    <table>
-      <thead>
-        <tr>
-          <th>日期</th>
-          <th>标的</th>
-          <th>策略</th>
-          <th>入场DNA</th>
-          <th>离场DNA</th>
-          <th>盈亏</th>
-          <th>负面事件</th>
-        </tr>
-      </thead>
-      <tbody id="trades-body">
-        <tr><td colspan="7" class="empty-state">加载中…</td></tr>
-      </tbody>
-    </table>
-  </div>
+<div class="section">
+  <h2>📊 当前持仓</h2>
+  <div id="pos_body"></div>
+</div>
 
-  <div class="footer">
-    <p>JARVIS 自主决策 · DNA 防守协议 v1 · 每日15:30自动更新 · <a href="pdca.html">DNA复盘中心</a></p>
-    <p style="margin-top:4px" id="update-time"></p>
-  </div>
+<div class="section">
+  <h2>📋 交易记录</h2>
+  <div id="hist_body"></div>
+</div>
+
+<div class="section">
+  <h2>⚔️ 对撞中心</h2>
+  <div id="health_bar"></div>
+  <h3>🌍 宏观环境对撞</h3>
+  <div id="macro_body"></div>
+  <h3>🎯 个股决策对撞表</h3>
+  <div id="collision_body"></div>
+  <div id="weekly_summary"></div>
+</div>
+
+<div class="section">
+  <h2>🧬 进化日志</h2>
+  <div id="evo_body"></div>
+</div>
 
 </div>
 
 <script>
-(async () => {
-  // Load data
-  let holdings = null, trades = null;
-  try {
-    let r = await fetch('data/holdings_dna.json?' + Date.now());
-    if (r.ok) holdings = await r.json();
-  } catch(e) {}
-  try {
-    let r = await fetch('data/trades.json?' + Date.now());
-    if (!r.ok) r = await fetch('https://raw.githubusercontent.com/yuanshao1983/trading-dashboard/main/data/trades.json');
-    if (r.ok) trades = await r.json();
-  } catch(e) {}
+function el(id){return document.getElementById(id)}
+function fmt(n,d){if(typeof n!=='number'||isNaN(n))return'-';return n.toFixed(d||0)}
+function pct(n){if(typeof n!=='number'||isNaN(n))return'-';return(n>=0?'+':'')+n.toFixed(2)+'%'}
+function updown(v){if(typeof v!=='number'||isNaN(v))return'';return v>=0?'up':'down'}
+function pnlClass(v){if(typeof v!=='number'||isNaN(v))return'';return v>=0?'profit':'loss'}
 
-  // ═══ Account Stats ═══
-  const acc = trades?.account || {};
-  const stats = [
-    {label:'当前净值', value:'¥' + (acc.current_value || 0).toLocaleString(), cls:''},
-    {label:'累计盈亏', value:'¥' + (acc.total_pnl || 0).toLocaleString(), cls: (acc.total_pnl||0) >= 0 ? 'green' : 'red'},
-    {label:'胜率', value:(acc.win_rate || 0) + '%', cls:'', sub: acc.win_count + '/' + acc.trade_count},
-  ];
-  document.getElementById('stats').innerHTML = stats.map(s =>
-    `<div class="stat-card"><div class="label">${s.label}</div><div class="value ${s.cls}">${s.value}</div>${s.sub ? `<div class="sub">${s.sub}</div>` : ''}</div>`
-  ).join('');
+function buildPositions(data){
+  var pos=data.positions||[],html='';
+  if(!pos.length){html='<div class="empty-state">空仓 — 等待下一次出击</div>'}
+  else{html='<table><thead><tr><th>代码</th><th>名称</th><th>成本</th><th>现价</th><th>股数</th><th>盈亏%</th><th>盈亏额</th><th>来源</th></tr></thead><tbody>';
+  for(var i=0;i<pos.length;i++){var p=pos[i],cls=pnlClass(p.pnl_pct);
+    html+='<tr><td>'+p.symbol+'</td><td>'+(p.name||'')+'</td><td>'+fmt(p.cost,2)+'</td><td>'+fmt(p.current,2)+'</td><td>'+p.shares+'</td><td class="'+cls+'">'+pct(p.pnl_pct)+'</td><td class="'+cls+'">'+fmt(p.pnl_amt,2)+'</td><td>'+(p.source||'')+'</td></tr>'}
+  html+='</tbody></table>'}
+  el('pos_body').innerHTML=html}
 
-  // ═══ Holdings ═══
-  if (holdings?.holdings?.length > 0) {
-    const h = holdings.holdings;
-    const below80 = h.filter(x => x.dna_below_80);
-    document.getElementById('holding-badge').textContent = below80.length > 0
-      ? `🚨 ${below80.length}只 < 80分`
-      : `${h.length}只 ✅`;
-    document.getElementById('holding-badge').className = 'badge ' + (below80.length > 0 ? 'badge-danger' : 'badge-ok');
+function buildHistory(data){
+  var hist=data.history||[],html='';
+  if(!hist.length){html='<div class="empty-state">暂无交易记录</div>'}
+  else{html='<table><thead><tr><th>日期</th><th>代码</th><th>名称</th><th>方向</th><th>价格</th><th>数量</th><th>金额</th><th>盈亏</th></tr></thead><tbody>';
+  for(var i=0;i<hist.length;i++){var h=hist[i],cls=h.side==='买入'?'buy':(h.pnl>=0?'profit':'loss');
+    html+='<tr><td>'+h.date+'</td><td>'+h.symbol+'</td><td>'+(h.name||'')+'</td><td class="'+(h.side==='买入'?'buy':'sell')+'">'+h.side+'</td><td>'+fmt(h.price,2)+'</td><td>'+h.qty+'</td><td>'+fmt(h.amount,2)+'</td><td class="'+cls+'">'+(h.pnl?pct(h.pnl):'-')+'</td></tr>'}
+  html+='</tbody></table>'}
+  el('hist_body').innerHTML=html}
 
-    document.getElementById('holdings-body').innerHTML = h.map(pos => {
-      const danger = pos.dna_below_80;
-      const dnaCls = pos.dna_total >= 91 ? 'dna-ok' : (pos.dna_total >= 80 ? 'dna-warn' : 'dna-danger');
-      const pnlCls = (pos.pnl_pct || 0) >= 0 ? 'green' : 'red';
-      const worst = pos.worst_dimension;
-      
-      return `<tr class="${danger ? 'danger' : ''}">
-        <td><strong>${pos.name}</strong> <span style="color:var(--text3)">${pos.code}</span></td>
-        <td>${pos.shares}股<br><span style="font-size:11px;color:var(--text2)">¥${(pos.market_value||0).toLocaleString()}</span></td>
-        <td>¥${pos.entry_price}</td>
-        <td>¥${pos.current_price}</td>
-        <td class="${pnlCls}" style="font-weight:600">${(pos.pnl_pct||0) >= 0 ? '+' : ''}${(pos.pnl_pct||0).toFixed(1)}%</td>
-        <td><span class="dna-score ${dnaCls}">${pos.dna_total != null ? pos.dna_total : '—'}</span>${pos.dna_total != null ? '<span style="font-size:10px;color:var(--text3)">/115</span>' : ''}</td>
-        <td>${worst ? `<span class="dim-badge">${worst.name} ${worst.score}/${worst.weight}</span>` : '—'}</td>
-      </tr>`;
-    }).join('');
-  } else {
-    document.getElementById('holding-badge').textContent = '空仓';
-    document.getElementById('holding-badge').className = 'badge badge-ok';
-  }
+function buildMacro(data){
+  var macro=data.macro||[],html='';
+  if(!macro.length){html='<div class="empty-state">无宏观对撞数据</div>'}
+  else{html='<table><thead><tr><th>日期</th><th>预测竞价</th><th>实际竞价</th><th>预测开盘</th><th>实际开盘</th><th>判定</th><th>封板</th><th>归因</th></tr></thead><tbody>';
+  for(var i=0;i<macro.length;i++){var m=macro[i],vcls=m.verdict.indexOf('🟢')===0?'badge-ok':(m.verdict.indexOf('🔴')===0?'badge-meltdown':'badge-warn');
+    html+='<tr><td>'+m.date+'</td><td>'+m.pred_bid_range+'</td><td>'+m.actual_bid+'</td><td>'+m.pred_open+'</td><td>'+m.actual_open+'</td><td><span class="badge '+vcls+'">'+m.verdict.substring(0,16)+'</span></td><td>'+m.sealed_count+'</td><td><span class="macro-detail">'+m.attribution+'</span></td></tr>'}
+  html+='</tbody></table>'}
+  el('macro_body').innerHTML=html}
 
-  // ═══ Trade History ═══
-  if (trades?.trades?.length > 0) {
-    document.getElementById('trades-body').innerHTML = trades.trades.slice().reverse().map(t => {
-      const pnlCls = (t.pnl || 0) >= 0 ? 'green' : 'red';
-      const entryDna = t.dna_entry != null ? t.dna_entry : '—';
-      const exitDna = t.dna_exit != null ? t.dna_exit : '—';
-      const event = t.negative_event || t.exit_reason || '—';
-      return `<tr>
-        <td>${t.buy_date || '—'}<br><span style="font-size:10px;color:var(--text3)">→ ${t.sell_date || '持仓中'}</span></td>
-        <td><strong>${t.name}</strong> <span style="color:var(--text3)">${t.code}</span></td>
-        <td>${t.strategy || '—'}</td>
-        <td>${entryDna}</td>
-        <td>${exitDna}</td>
-        <td class="${pnlCls}" style="font-weight:600">¥${(t.pnl||0).toLocaleString()}</td>
-        <td style="font-size:12px;color:var(--text2);max-width:200px">${event}</td>
-      </tr>`;
-    }).join('');
-  }
+function buildCollision(data){
+  var daily=data.daily_all||data.daily||[],html='';
+  if(!daily.length){html='<div class="empty-state">无对撞记录</div>'}
+  else{html='<table><thead><tr><th>日期</th><th>标的</th><th>预测分</th><th>竞价%</th><th>实际%</th><th>结果</th><th>偏差类型</th><th>详情/归因</th></tr></thead><tbody>';
+  for(var i=0;i<daily.length;i++){var c=daily[i],
+    rcls=c.result==='sealed'?'badge-sealed':(c.result==='meltdown'?'badge-meltdown':(c.result==='failed'?'badge-down':'badge-warn')),
+    rlabel=c.result==='sealed'?'封板':(c.result==='meltdown'?'熔断':(c.result==='failed'?'失败':(c.result==='no_signal'?'无信号':c.result)));
+    html+='<tr><td>'+c.date+'</td><td>'+(c.symbol||'—')+' '+(c.name||'')+'</td><td>'+(c.predicted_score||'-')+'</td><td>'+(c.auction_pct?pct(c.auction_pct):'-')+'</td><td class="'+updown(c.actual_pct)+'">'+(c.actual_pct?pct(c.actual_pct):'-')+'</td><td><span class="badge '+rcls+'">'+rlabel+'</span></td><td>'+(c.deviation_label||'')+'</td><td><span class="macro-detail">'+(c.deviation_detail||'')+'</span></td></tr>'}
+  html+='</tbody></table>'}
+  el('collision_body').innerHTML=html}
 
-  document.getElementById('update-time').textContent = '更新: ' + (trades?.updated || holdings?.timestamp || '—');
-})();
+function buildHealth(data){
+  var health=data.system_health||{};
+  if(!health.status)return;
+  var barCls=health.status==='ok'?'health-ok':(health.status==='critical'?'health-critical':'health-warn');
+  el('health_bar').innerHTML='<div class="health-bar '+barCls+'"><strong>'+(health.level||'')+' 系统: '+(health.warning||health.diagnosis||health.status)+'</strong>'+(health.action?' — '+health.action:'')+'</div>'}
+
+function buildWeekly(data){
+  var ws=data.weekly_summary||{};
+  if(!ws.period)return;
+  var hitCls=ws.hit_rate>=0.5?'profit':(ws.hit_rate>=0.3?'':'loss');
+  el('weekly_summary').innerHTML='<div class="verdict"><div class="title">'+ws.period+' 周度统计</div><div class="text">对撞 '+ws.total+' | 命中 <strong class="'+hitCls+'">'+(ws.hit_count||0)+'</strong> | 命中率 <strong class="'+hitCls+'">'+((ws.hit_rate||0)*100).toFixed(0)+'%</strong>'+(ws.top_deviation_type!=='none'?' | 偏差: '+(ws.top_deviation_label||''):'')+'</div></div>'}
+
+function buildEvolution(data){
+  var evo=data.evolution_center||{},params=evo.parameter_log||[],html='';
+  if(evo.weekly_verdict){var wv=evo.weekly_verdict;
+    html+='<div class="verdict" style="margin-bottom:14px"><div class="title">'+wv.period+' 本周策略有效性结论</div><div class="text">'+(wv.verdict||'')+' | 变更'+wv.param_changes+'项 | '+wv.next_focus+'</div></div>'}
+  if(!params.length){html+='<div class="empty-state">暂无参数调整记录</div>'}
+  else{html+='<table><thead><tr><th>日期</th><th>模块</th><th>调整前</th><th>调整后</th><th>原因</th><th>状态</th><th>效果</th></tr></thead><tbody>';
+  for(var i=params.length-1;i>=0;i--){var p=params[i],scls=p.status.indexOf('生效')>=0?'badge-ok':'badge-test';
+    html+='<tr><td>'+p.date+'</td><td>'+p.module+'</td><td style="font-size:11px;color:#999">'+(p.param_before||'')+'</td><td style="font-size:11px;color:#ddd">'+(p.param_after||'')+'</td><td style="font-size:11px;max-width:180px">'+(p.reason||'')+'</td><td><span class="badge '+scls+'">'+p.status+'</span></td><td style="font-size:11px;color:#999">'+(p.effect||'')+'</td></tr>'}
+  html+='</tbody></table>'}
+  el('evo_body').innerHTML=html}
+
+function update(){
+  var x=new XMLHttpRequest();
+  x.open('GET','./dashboard_data.json?t='+Date.now(),true);
+  x.onload=function(){
+    if(x.status!==200){el('ts').innerText='加载失败,重试中...';return}
+    var d=JSON.parse(x.responseText);
+    el('ts').innerText='数据: '+(d.ts||'')+' | 交易日历过滤已激活 | 回溯补齐06.01-06.08';
+    var a=d.account||{};
+    el('kp_total').innerText='¥'+fmt(a.total_assets,2);
+    el('kp_cash').innerText='¥'+fmt(a.cash,2);
+    el('kp_pnl').innerHTML=(a.total_pnl>=0?'+':'')+fmt(a.total_pnl,2);
+    el('kp_pnl').className='value '+pnlClass(a.total_pnl);
+    el('kp_pnlpct').innerText='总收益率 '+pct(a.total_pnl_pct);
+    el('kp_pnlpct').className='subv '+pnlClass(a.total_pnl_pct);
+    el('kp_trades').innerText=(a.trade_count||0)+'笔';
+    el('kp_winrate').innerText='胜率 '+((a.win_rate||0)*100).toFixed(0)+'%';
+    buildPositions(d);buildHistory(d);
+    var cc=d.collision_center||{};
+    buildHealth(cc);buildMacro(cc);buildCollision(cc);buildWeekly(cc);
+    buildEvolution(d)};
+  x.onerror=function(){el('ts').innerText='连接失败'} ;x.send()}
+update();setInterval(update,60000)
 </script>
 </body>
 </html>
