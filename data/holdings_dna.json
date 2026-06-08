@@ -1,0 +1,10 @@
+{
+  "timestamp": "2026-06-08T14:03:21.986510",
+  "holdings": [],
+  "summary": {
+    "total_positions": 0,
+    "below_80_count": 0,
+    "below_80_codes": [],
+    "exit_threshold": 80
+  }
+}

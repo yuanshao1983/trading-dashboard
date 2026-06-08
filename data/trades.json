@@ -1,5 +1,5 @@
 {
-  "updated": "2026-06-02 15:10",
+  "updated": "2026-06-08 14:03",
   "account": {
     "initial": 200000,
     "current_value": 187514.71,
@@ -12,8 +12,9 @@
   },
   "trades": [
     {
-      "name": "风华高科",
+      "id": 1,
       "code": "000636",
+      "name": "风华高科",
       "buy_date": "2026-05-26",
       "sell_date": "2026-05-26",
       "holding_days": 0,
@@ -24,11 +25,16 @@
       "pnl_pct": -6.32,
       "strategy": "首板",
       "exit_reason": "-5%硬止损触发",
-      "tag": "🔴"
+      "verified": true,
+      "tag": "🔴",
+      "dna_entry": 19.6,
+      "dna_exit": 19.6,
+      "negative_event": "技术面破位(硬止损)"
     },
     {
-      "name": "风华高科",
+      "id": 2,
       "code": "000636",
+      "name": "风华高科",
       "buy_date": "2026-05-26",
       "sell_date": "2026-05-27",
       "holding_days": 1,
@@ -39,11 +45,16 @@
       "pnl_pct": 1.1,
       "strategy": "首板",
       "exit_reason": "回本离场",
-      "tag": "🟢"
+      "verified": true,
+      "tag": "🟢",
+      "dna_entry": 19.6,
+      "dna_exit": 19.6,
+      "negative_event": "回本离场"
     },
     {
-      "name": "吉视传媒",
+      "id": 3,
       "code": "601929",
+      "name": "吉视传媒",
       "buy_date": "2026-05-26",
       "sell_date": "2026-05-27",
       "holding_days": 1,
@@ -54,11 +65,15 @@
       "pnl_pct": -5.0,
       "strategy": "中线",
       "exit_reason": "反T先卖-冲高回落",
-      "tag": "🔴"
+      "verified": true,
+      "tag": "🔴",
+      "dna_exit": null,
+      "negative_event": "反T先卖-冲高回落"
     },
     {
-      "name": "吉视传媒",
+      "id": 4,
       "code": "601929",
+      "name": "吉视传媒",
       "buy_date": "2026-05-27",
       "sell_date": "2026-06-02",
       "holding_days": 4,
@@ -69,11 +84,16 @@
       "pnl_pct": -4.23,
       "strategy": "中线",
       "exit_reason": "VWAP破位清仓",
-      "tag": "🔴"
+      "verified": true,
+      "tag": "🔴",
+      "note": "反T买回→6/2清仓，卖出价待补",
+      "dna_exit": null,
+      "negative_event": "技术面破位(VWAP)"
     },
     {
-      "name": "圣邦股份",
+      "id": 5,
       "code": "300661",
+      "name": "圣邦股份",
       "buy_date": "2026-05-27",
       "sell_date": "2026-05-28",
       "holding_days": 1,
@@ -84,11 +104,15 @@
       "pnl_pct": -6.0,
       "strategy": "打板",
       "exit_reason": "-5%硬止损触发",
-      "tag": "🔴"
+      "verified": true,
+      "tag": "🔴",
+      "dna_exit": null,
+      "negative_event": "技术面破位(硬止损)"
     },
     {
-      "name": "苏州固锝",
+      "id": 6,
       "code": "002079",
+      "name": "苏州固锝",
       "buy_date": "2026-05-27",
       "sell_date": "2026-05-29",
       "holding_days": 2,
@@ -99,11 +123,16 @@
       "pnl_pct": -9.3,
       "strategy": "打板",
       "exit_reason": "半导体溃退→主力出货清仓",
-      "tag": "🔴"
+      "verified": true,
+      "tag": "🔴",
+      "note": "卖出价待补",
+      "dna_exit": null,
+      "negative_event": "板块共振失效"
     },
     {
-      "name": "慧谷新材",
+      "id": 7,
       "code": "301683",
+      "name": "慧谷新材",
       "buy_date": "2026-06-01",
       "sell_date": "2026-06-02",
       "holding_days": 1,
@@ -114,7 +143,11 @@
       "pnl_pct": -3.15,
       "strategy": "潜伏",
       "exit_reason": "-3%硬止损触发(已废除规则)",
-      "tag": "🔴"
+      "verified": true,
+      "tag": "🔴",
+      "note": "卖出@134.90(止损触发)，日低132.38，日高146.66(+10.8%未吃到)",
+      "dna_exit": null,
+      "negative_event": "技术面破位(硬止损)"
     }
   ],
   "lessons": [
