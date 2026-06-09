@@ -1,20 +1,35 @@
 {
-  "ts": "2026-06-08 20:53:00",
+  "ts": "2026-06-09 15:10:12",
   "account": {
-    "total_assets": 187514.71,
-    "cash": 187514.71,
+    "total_assets": 145278.15,
+    "cash": 145278.15,
     "holdings_value": 0,
     "total_pnl": -12485.29,
     "total_pnl_pct": -6.24,
-    "fees": 453.33,
-    "trade_count": 7,
+    "fees": 463.89,
+    "trade_count": 9,
     "win_count": 1,
-    "win_rate": 0.14,
-    "daily_snapshot": "2026-06-08",
-    "has_positions": false,
-    "is_empty": true
+    "win_rate": 0.11,
+    "daily_snapshot": "2026-06-09",
+    "has_positions": true,
+    "is_empty": false
   },
-  "positions": [],
+  "positions": [
+    {
+      "symbol": "603929",
+      "name": "亚翔集成",
+      "cost": 203.98,
+      "shares": 100,
+      "source": "hunter"
+    },
+    {
+      "symbol": "301428",
+      "name": "世纪恒通",
+      "cost": 36.38,
+      "shares": 600,
+      "source": "hunter"
+    }
+  ],
   "history": [
     {
       "date": "2026-05-26",
@@ -380,7 +395,7 @@
       }
     ],
     "weekly_summary": {
-      "period": "2026-06-01 ~ 2026-06-08",
+      "period": "2026-06-02 ~ 2026-06-09",
       "total": 2,
       "hit_rate": 0.0,
       "hit_count": 0
@@ -433,7 +448,7 @@
       },
       {
         "date": "2026-06-04",
-        "module": "Predator板块共振",
+        "module": "Hunter板块共振",
         "param_before": "空值(无板块字段)→得0分",
         "param_after": "离线映射sector_map.json(774只×26分类)→板块共振25分",
         "reason": "Sina回退丢失板块字段→无法评估板块驱动→漏掉有板块支撑的标的",
@@ -461,7 +476,7 @@
       {
         "date": "2026-06-08",
         "module": "对撞数据源",
-        "param_before": "predator_pool.json→编造封板",
+        "param_before": "hunter_pool.json→编造封板",
         "param_after": "paper_account.json→实盘交易",
         "reason": "Shawn:L3强制修正—候选≠实盘",
         "status": "🔄 测试中",
@@ -469,9 +484,9 @@
       }
     ],
     "weekly_verdicts": [],
-    "last_updated": "2026-06-08",
+    "last_updated": "2026-06-09",
     "weekly_verdict": {
-      "period": "2026-06-01 ~ 2026-06-08",
+      "period": "2026-06-02 ~ 2026-06-09",
       "hit_rate": 0.0,
       "hit_count": 0,
       "total_collisions": 2,
