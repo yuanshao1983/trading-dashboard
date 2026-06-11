@@ -1,32 +1,32 @@
 {
-  "ts": "2026-06-09 15:10:12",
+  "ts": "2026-06-11 15:10:04",
   "account": {
-    "total_assets": 145278.15,
-    "cash": 145278.15,
+    "total_assets": 181086.84,
+    "cash": 181086.84,
     "holdings_value": 0,
-    "total_pnl": -12485.29,
-    "total_pnl_pct": -6.24,
-    "fees": 463.89,
-    "trade_count": 9,
-    "win_count": 1,
-    "win_rate": 0.11,
-    "daily_snapshot": "2026-06-09",
+    "total_pnl": -10330.6,
+    "total_pnl_pct": -5.17,
+    "fees": 507.2,
+    "trade_count": 13,
+    "win_count": 2,
+    "win_rate": 0.15,
+    "daily_snapshot": "2026-06-11",
     "has_positions": true,
     "is_empty": false
   },
   "positions": [
     {
-      "symbol": "603929",
-      "name": "亚翔集成",
-      "cost": 203.98,
-      "shares": 100,
+      "symbol": "300505",
+      "name": "川金诺",
+      "cost": 20.56,
+      "shares": 200,
       "source": "hunter"
     },
     {
-      "symbol": "301428",
-      "name": "世纪恒通",
-      "cost": 36.38,
-      "shares": 600,
+      "symbol": "002312",
+      "name": "川发龙蟒",
+      "cost": 8.9,
+      "shares": 500,
       "source": "hunter"
     }
   ],
@@ -184,6 +184,28 @@
       "amount": 40470.0,
       "fees": 30.35,
       "pnl": -1313.66
+    },
+    {
+      "date": "2026-06-09",
+      "symbol": "603929",
+      "name": "亚翔集成",
+      "side": "买入",
+      "price": 203.98,
+      "qty": 100,
+      "amount": 20398.0,
+      "fees": 5.1,
+      "pnl": 0
+    },
+    {
+      "date": "2026-06-10",
+      "symbol": "603929",
+      "name": "亚翔集成",
+      "side": "卖出",
+      "price": 220.76,
+      "qty": 100,
+      "amount": 22076.0,
+      "fees": 16.56,
+      "pnl": 1661.44
     }
   ],
   "collision_center": {
@@ -307,6 +329,23 @@
         "deviation_detail": "买入139.07→卖出134.9，亏损-3.0%",
         "fix_action": "",
         "source": "razor"
+      },
+      {
+        "date": "2026-06-10",
+        "buy_date": "2026-06-09",
+        "symbol": "603929",
+        "name": "亚翔集成",
+        "buy_price": 203.98,
+        "sell_price": 220.76,
+        "shares": 100,
+        "pnl": 1661.44,
+        "ret_pct": 8.23,
+        "result": "partial",
+        "deviation_type": "none",
+        "deviation_label": "小幅盈利",
+        "deviation_detail": "买入203.98→卖出220.76，收益8.23%",
+        "fix_action": "",
+        "source": "razor"
       }
     ],
     "has_trades_today": false,
@@ -389,22 +428,22 @@
         "actual_open": "大幅低开-2.2%",
         "verdict": "🟢 方向正确",
         "sealed_count": 55,
-        "attribution": "美股黑色星期五→亚太崩跌。竞价398符合红灯预期。空仓正确——大盘触发恐慌降级。",
-        "framework": "Shawn严格(低开>0.8%触发)",
+        "attribution": "隔夜A50暴跌→亚太崩跌。竞价398符合红灯预期。空仓正确——大盘触发恐慌降级。",
+        "framework": "Shawn严格(A50≤-1.5%触发)",
         "trades_executed": 0
       }
     ],
     "weekly_summary": {
-      "period": "2026-06-02 ~ 2026-06-09",
-      "total": 2,
+      "period": "2026-06-04 ~ 2026-06-11",
+      "total": 1,
       "hit_rate": 0.0,
       "hit_count": 0
     },
     "system_health": {
       "status": "warning",
       "level": "🟡",
-      "warning": "累计亏损-12485元 — 胜率0%需提升",
-      "diagnosis": "完成7笔交易 | 盈利0笔 | 亏损6笔 | 累计盈亏-12485",
+      "warning": "累计亏损-10824元 — 胜率0%需提升",
+      "diagnosis": "完成8笔交易 | 盈利0笔 | 亏损6笔 | 累计盈亏-10824",
       "action": ""
     }
   },
@@ -484,13 +523,13 @@
       }
     ],
     "weekly_verdicts": [],
-    "last_updated": "2026-06-09",
+    "last_updated": "2026-06-11",
     "weekly_verdict": {
-      "period": "2026-06-02 ~ 2026-06-09",
+      "period": "2026-06-04 ~ 2026-06-11",
       "hit_rate": 0.0,
       "hit_count": 0,
-      "total_collisions": 2,
-      "param_changes": 8,
+      "total_collisions": 1,
+      "param_changes": 6,
       "verdict": "🟡 无新增实盘交易 — 06.03起连续5个交易日空仓。熔断日×4+无信号日×1。风控生效但需关注过度保守。",
       "next_focus": "验证数据源修正: 对撞表=真实成交。积累实盘对撞样本。"
     }
